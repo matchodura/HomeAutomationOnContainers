@@ -30,6 +30,7 @@ namespace SensorLogging
         {
 
             services.AddApplicationServices(_config);
+            services.AddMvc();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
