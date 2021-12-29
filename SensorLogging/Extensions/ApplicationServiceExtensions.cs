@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SensorLogging.API.Infrasctructure.Services;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,8 @@ namespace SensorLogging.API.Extensions
             });
 
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
+
+            services.AddHostedService<DataPollingService>();
 
             return services;
         }
