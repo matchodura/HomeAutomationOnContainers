@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SensorLogging
+namespace RPI.API
 {
     public class Program
     {
@@ -22,13 +22,5 @@ namespace SensorLogging
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        //public static IWebHostBuilder CreateHostBuilder(string[] args) =>
-        //Microsoft.AspNetCore.WebHost.CreateDefaultBuilder(args)
-        //.UseUrls("http://0.0.0.0:5001")
-        //.UseUrls("http://localhost:5000")
-        //.UseUrls("http://localhost:8090")
-        //.UseStartup<Startup>();
-
     }
 }

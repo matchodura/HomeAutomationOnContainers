@@ -1,12 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SensorLogging.API.Infrasctructure.Services;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SensorLogging.API.Extensions
 {
@@ -33,25 +27,25 @@ namespace SensorLogging.API.Extensions
             services.AddHttpClient();
 
 
-            services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
+          //  services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
 
             //services.AddHostedService<DataPollingService>();
 
             return services;
         }
 
-        private static ILogger CreateSerilogLogger(IConfiguration configuration)
-        {
-            var seqServerUrl = configuration["Serilog:SeqServerUrl"];
+        //private static ILogger CreateSerilogLogger(IConfiguration configuration)
+        //{
+        //    var seqServerUrl = configuration["Serilog:SeqServerUrl"];
 
-            return new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
-                .ReadFrom.Configuration(configuration)
-                .CreateLogger();
-        }
+        //    return new LoggerConfiguration()
+        //        .MinimumLevel.Verbose()
+        //        .Enrich.FromLogContext()
+        //        .WriteTo.Console()
+        //        .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
+        //        .ReadFrom.Configuration(configuration)
+        //        .CreateLogger();
+        //}
     }
 }
 
