@@ -6,6 +6,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SensorLogging.API.Extensions
@@ -41,18 +42,23 @@ namespace SensorLogging.API.Extensions
         }
 
         private static ILogger CreateSerilogLogger(IConfiguration configuration)
-        {
+        { 
+            string machineName = Environment.MachineName;
             var seqServerUrl = configuration["Serilog:SeqServerUrl"];
-
+            
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
+                .Enrich.WithProperty("_service", "SensorLogging")
+                .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Console()
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
-                .ReadFrom.Configuration(configuration)
+                .ReadFrom.Configuration(configuration)                
                 .CreateLogger();
+
         }
     }
+    
 }
 
 

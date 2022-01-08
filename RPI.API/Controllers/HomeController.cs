@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Entities;
+using Microsoft.AspNetCore.Mvc;
 using RaspberryPI.API.Utilities;
+using Serilog;
 using System;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace SensorLogging.API.Controllers
 {
@@ -9,41 +12,54 @@ namespace SensorLogging.API.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     public class HomeController : Controller
     {
-        //private readonly ILogger _logger;
+        private readonly ILogger _logger;
 
-        //public HomeController(ILogger logger)
-        //{
-        //    _logger = logger;
-        //}
+        public HomeController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         [HttpGet]
         public IActionResult Index()
         {
-           // _logger.LogInformation("Hello from swagger!");
             return new RedirectResult("~/swagger");
         }
 
         [Route("mijia")]
         [HttpPost]
-        public IActionResult GetValuesFromBLE([FromBody] string scriptPath)
+        public async Task<ActionResult<Mijia>> GetValuesFromBLE([FromBody] string scriptPath)
         {
 
-            //_logger.LogInformation("Hello from rpi mijia runner!");
-            Console.WriteLine("Hello from rpi mijia runner!");
+            string pythonResult = string.Empty;
 
             try
             {
-                //todo: add mac adress and retries number
-                PythonRunner.RunScript(scriptPath);
+                _logger.Information($"Running python script at path: {scriptPath}");
+                pythonResult = await PythonRunner.RunScript(scriptPath);
 
-                return Ok("Script completed!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Erorr occured: {ex.Message}");
+                _logger.Error("An error occurred. {ErrorMessage} - {StackTrace}", ex.Message, ex.StackTrace);
+                return BadRequest("Error occured!");
             }
 
-            return NotFound("Nie dziala!");
+            var result = JsonSerializer.Deserialize<Mijia>(pythonResult);
+
+            return Ok(result);
         }
+
+        //TODO searching on RPI via bash command
+        [Route("mijia/search")]
+        [HttpPost]
+        public IActionResult FindAvailableBLESensors()
+        {
+
+            _logger.Information("Searching for nearest BLE devices...");
+
+            return Ok();
+        }
+
+        //TODO getting more values RPI provide
     }
 }

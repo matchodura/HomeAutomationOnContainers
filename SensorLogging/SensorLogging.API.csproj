@@ -15,8 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Entities\" />
     <Folder Include="Middlewares\" />
+    <Folder Include="Utilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common\Entities\Entities.csproj" />
   </ItemGroup>
 
 </Project>
