@@ -50,9 +50,6 @@ namespace SensorLogging.API.Controllers.v1
 
             var contents = await httpResponse.Content.ReadAsStringAsync();
 
-
-
-            //TODO: check if this makes sense
             if (string.IsNullOrEmpty(contents))
             {
                 _logger.Error("Response did not contain valid values!");
@@ -60,15 +57,7 @@ namespace SensorLogging.API.Controllers.v1
                 return BadRequest("Something went wrong");
             }
 
-
-            var result = JsonSerializer.Deserialize<Mijia>(contents);
-
-
-
-            //TODO do it more cleanly, either save timestamp to database and then convert
-            //or convert on the moment the result are comming and then save it to db
-            //or ignore and let the frontend convert the result
-                        
+            var result = JsonSerializer.Deserialize<Mijia>(contents);                                  
 
             //PushProperty in place of ForContext to make it a global prop
             _logger.ForContext("Temperature", result.Temperature)

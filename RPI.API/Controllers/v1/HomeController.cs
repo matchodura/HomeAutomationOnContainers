@@ -49,7 +49,16 @@ namespace RPI.API.Controllers
                 return BadRequest("Error occured!");
             }
 
+            if (string.IsNullOrEmpty(pythonResult))
+            {
+                _logger.Error("Failed obtaining results from running python script!");
+
+                return BadRequest("Failed getting python results!");
+            }
+
+
             var result = JsonSerializer.Deserialize<Mijia>(pythonResult);
+
 
             _unitOfWork.MijiaRepository.AddValuesForMijia(result);
 
