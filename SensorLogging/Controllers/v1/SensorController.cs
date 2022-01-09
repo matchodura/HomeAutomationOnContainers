@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SensorLogging.API.Controllers.v1;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace SensorLogging.API.Controllers
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class SensorController : Controller
+    public class SensorController : BaseApiController
     {
         private readonly ILogger _logger;
 

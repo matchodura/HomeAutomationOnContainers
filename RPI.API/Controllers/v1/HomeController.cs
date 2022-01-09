@@ -1,22 +1,27 @@
 ﻿using Entities;
 using Microsoft.AspNetCore.Mvc;
 using RaspberryPI.API.Utilities;
+using RPI.API.Controllers;
+using RPI.API.Extensions;
+using RPI.API.Interfaces;
 using Serilog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SensorLogging.API.Controllers
+namespace RPI.API.Controllers
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class HomeController : Controller
+    public class HomeController : BaseApiController
     {
         private readonly ILogger _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(ILogger logger)
+        public HomeController(ILogger logger, IUnitOfWork unitOfWork)
         {
             _logger = logger;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -46,8 +51,26 @@ namespace SensorLogging.API.Controllers
 
             var result = JsonSerializer.Deserialize<Mijia>(pythonResult);
 
-            return Ok(result);
+            _unitOfWork.MijiaRepository.AddValuesForMijia(result);
+
+            if (await _unitOfWork.Complete()) return Ok(result);
+
+            return BadRequest("Failed to add entry!");
         }
+
+
+        [HttpGet]
+        [Route("mijia/values")]
+        public async Task<ActionResult<IEnumerable<Mijia>>> GetAllValues([FromQuery] string sensorName)
+        {
+            var mijiaValues = await _unitOfWork.MijiaRepository.GetAllValuesForMijia(sensorName);
+
+            if (mijiaValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
+
+            return Ok(mijiaValues);
+
+        }
+
 
         //TODO searching on RPI via bash command
         [Route("mijia/search")]

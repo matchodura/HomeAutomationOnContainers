@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RPI.API.Data;
+using RPI.API.Interfaces;
 using Serilog;
 using System;
 
@@ -17,19 +20,19 @@ namespace SensorLogging.API.Extensions
                 options.ReportApiVersions = true;
             });
 
-            //services.AddHttpClient("rpi", c =>
-            //{
-            //    c.BaseAddress = new Uri("https://api.github.com/");
-            //    // Github API versioning
-            //    c.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
-            //    // Github requires a user-agent
-            //    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
-            //});
 
-            services.AddHttpClient();
-
-
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
+            services.AddDbContext<RpiDataContext>(options =>
+            {
+
+                string connStr = config.GetConnectionString("DefaultConnection");
+
+
+                options.UseNpgsql(connStr);
+
+            });
+
 
             //services.AddHostedService<DataPollingService>();
 

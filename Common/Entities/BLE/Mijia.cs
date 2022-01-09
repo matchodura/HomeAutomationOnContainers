@@ -5,6 +5,9 @@ namespace Entities
 {
     public class Mijia
     {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
         [JsonPropertyName("temperature")]
         public float Temperature { get; set; }
 
@@ -24,6 +27,6 @@ namespace Entities
         public string MacAddress { get; set; }
 
         [JsonPropertyName("timestamp")]
-        public double Timestamp { get; set; }
+        public double TimestampLinux { get; set; }
     }
 }

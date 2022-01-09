@@ -12,9 +12,7 @@ using System.Threading.Tasks;
 
 namespace SensorLogging.API.Controllers.v1
 {
-    [ApiVersion("1.0")]
-    [Route("api/v{version:apiVersion}/[controller]")]
-    public class MijiaController : Controller
+    public class MijiaController : BaseApiController
     {
 
         private readonly IHttpClientFactory _clientFactory;
@@ -52,8 +50,10 @@ namespace SensorLogging.API.Controllers.v1
 
             var contents = await httpResponse.Content.ReadAsStringAsync();
 
+
+
             //TODO: check if this makes sense
-            if (contents is null)
+            if (string.IsNullOrEmpty(contents))
             {
                 _logger.Error("Response did not contain valid values!");
 
@@ -63,11 +63,12 @@ namespace SensorLogging.API.Controllers.v1
 
             var result = JsonSerializer.Deserialize<Mijia>(contents);
 
+
+
             //TODO do it more cleanly, either save timestamp to database and then convert
             //or convert on the moment the result are comming and then save it to db
             //or ignore and let the frontend convert the result
-
-            var time = UnixTimeStampToDateTime(result.Timestamp);
+                        
 
             //PushProperty in place of ForContext to make it a global prop
             _logger.ForContext("Temperature", result.Temperature)
@@ -76,19 +77,38 @@ namespace SensorLogging.API.Controllers.v1
                 .ForContext("Battery", result.Battery)
                 .ForContext("Sensor", result.SensorName)
                 .ForContext("MacAddress", result.MacAddress)
-                .ForContext("Timestamp", time)
+                .ForContext("TimestampUTC", result.TimestampLinux)
                 .Information("Successfully obtained values for mijia sensor!");
 
             return Ok(result);
         }
 
-        private static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        [HttpGet]
+        [Route("values")]
+        public async Task<ActionResult<IEnumerable<Mijia>>> GetValuesForMijia([FromQuery] string sensorName)
         {
-            // Unix timestamp is seconds past epoch
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dateTime;
+
+           // string endpoint = @$"/values?sensorName={macAddress}";
+
+            var httpClient = _clientFactory.CreateClient();
+            var content = new StringContent(
+                    JsonSerializer.Serialize(sensorName),
+                    Encoding.UTF8,
+                    "application/json");
+
+            using var httpResponse = await httpClient.GetAsync(Constants.RPI_IP_ADDRESS + $"/values?sensorName={sensorName}");
+
+
+            httpResponse.EnsureSuccessStatusCode();
+
+            var contents = await httpResponse.Content.ReadAsStringAsync();
+
+            var result = JsonSerializer.Deserialize<IEnumerable<Mijia>>(contents);
+
+            return Ok(result);
         }
+
+
 
     }
 }
