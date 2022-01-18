@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SensorLogging.API.Controllers.v1
+
+namespace HomeControl.API.Controllers.v1
 {
     [ApiController]
     [ApiVersion("1.0")]
