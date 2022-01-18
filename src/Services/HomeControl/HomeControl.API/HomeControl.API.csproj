@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Middlewares\**" />
+    <Compile Remove="Utilities\**" />
+    <Content Remove="Middlewares\**" />
+    <Content Remove="Utilities\**" />
+    <EmbeddedResource Remove="Middlewares\**" />
+    <EmbeddedResource Remove="Utilities\**" />
+    <None Remove="Middlewares\**" />
+    <None Remove="Utilities\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
@@ -15,14 +26,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\" />
-    <Folder Include="Middlewares\" />
-    <Folder Include="Utilities\" />
+    <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
+    <ProjectReference Include="..\..\Logging\Logging.API\Logging.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Entities\Entities.csproj" />
-    <ProjectReference Include="..\..\Logging\Logging.API\Logging.API.csproj" />
+    <Folder Include="Infrastructure\Exceptions\" />
+    <Folder Include="Infrastructure\Middlewares\" />
   </ItemGroup>
 
 </Project>

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SensorLogging.API.Infrasctructure.Services
+namespace SensorLogging.API.Infrastructure.BackgroundServices
 {
     public class DataPollingService : BackgroundService
     {

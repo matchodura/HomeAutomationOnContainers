@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Entities\Entities.csproj" />
+    <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
   </ItemGroup>
 
 </Project>
