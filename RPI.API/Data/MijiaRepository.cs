@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using RPI.API.Extensions;
+using Entities.BLE;
 
 namespace RPI.API.Data
 {
@@ -16,6 +17,11 @@ namespace RPI.API.Data
         public MijiaRepository(RpiDataContext context)
         {
             _context = context;
+        }
+
+        public void AddDevice(Device device)
+        {
+            _context.Devices.Add(device);  
         }
 
         public void AddValuesForMijia(Mijia mijia)

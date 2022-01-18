@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Entities\Entities.csproj" />
+    <ProjectReference Include="..\SensorLogging\SensorLogging.API.csproj" />
   </ItemGroup>
 
 </Project>

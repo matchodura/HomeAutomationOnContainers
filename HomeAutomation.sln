@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31829.152
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2A30F5AC-1650-4948-AAF8-B4DAD07AAA2E}"
 EndProject
@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPI.API", "RPI.API\RPI.API.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{103D5867-30A9-4ABD-8173-C981921D1A48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Entities", "Common\Entities\Entities.csproj", "{D54B9C22-E4BE-4555-8CC1-83F7F5E8A57A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Common\Entities\Entities.csproj", "{D54B9C22-E4BE-4555-8CC1-83F7F5E8A57A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPI.API.UnitTests", "RPI.API.UnitTests\RPI.API.UnitTests.csproj", "{6CF33A57-CBDA-4CB0-8F15-32D1524CAA22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPI.API.UnitTests", "RPI.API.UnitTests\RPI.API.UnitTests.csproj", "{6CF33A57-CBDA-4CB0-8F15-32D1524CAA22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

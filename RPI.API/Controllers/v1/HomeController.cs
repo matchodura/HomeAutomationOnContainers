@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Entities.BLE;
 using Microsoft.AspNetCore.Mvc;
 using RaspberryPI.API.Utilities;
 using RPI.API.Controllers;
@@ -40,7 +41,7 @@ namespace RPI.API.Controllers
             try
             {
                 _logger.Information($"Running python script at path: {scriptPath}");
-                pythonResult = await PythonRunner.RunScript(scriptPath);
+                pythonResult = await SciptRunner.RunPythonScript(scriptPath);
 
             }
             catch (Exception ex)
@@ -84,12 +85,38 @@ namespace RPI.API.Controllers
         //TODO searching on RPI via bash command
         [Route("mijia/search")]
         [HttpPost]
-        public IActionResult FindAvailableBLESensors()
+        public async Task<ActionResult<string>> FindAvailableBLESensors()
         {
 
             _logger.Information("Searching for nearest BLE devices...");
 
-            return Ok();
+            string bashResult = string.Empty;
+            string scriptPath = @"/home/pi/ble_scan.sh";
+
+
+            try
+            {
+                _logger.Information($"Running bash script at path: {scriptPath}");
+                bashResult = await SciptRunner.RunBashScript(scriptPath);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("An error occurred. {ErrorMessage} - {StackTrace}", ex.Message, ex.StackTrace);
+                return BadRequest("Error occured!");
+            }
+
+            if (string.IsNullOrEmpty(bashResult))
+            {
+                _logger.Error("Failed obtaining results from running bash script!");
+
+                return BadRequest("Failed getting bash results!");
+            }
+
+            
+
+
+            return Ok(bashResult);
         }
 
         //TODO getting more values RPI provide

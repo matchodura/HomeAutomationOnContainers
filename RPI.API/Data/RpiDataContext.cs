@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Entities.BLE;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,15 @@ namespace RPI.API.Data
         }
 
         public DbSet<Mijia> Mijias { get; set; }
+        public DbSet<Device> Devices { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<Device>()
+                .Property(x => x.Type)
+                .HasConversion<string>();
+        }
     }
 }

@@ -96,8 +96,5 @@ namespace SensorLogging.API.Controllers.v1
 
             return Ok(result);
         }
-
-
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Entities.BLE;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,7 @@ namespace RPI.API.Interfaces
     {
         void AddValuesForMijia(Mijia mijia);
         Task<IEnumerable<Mijia>> GetAllValuesForMijia(string sensorName);
+
+        void AddDevice(Device device);
     }
 }
