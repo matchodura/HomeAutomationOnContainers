@@ -22,5 +22,6 @@ namespace SensorLogging
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
     }
 }

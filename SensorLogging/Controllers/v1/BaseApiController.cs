@@ -4,17 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SensorLogging.API.Controllers
+namespace SensorLogging.API.Controllers.v1
 {
+    [ApiController]
     [ApiVersion("1.0")]
-    [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    public class SensorController : Controller
+    public class BaseApiController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+
     }
 }
