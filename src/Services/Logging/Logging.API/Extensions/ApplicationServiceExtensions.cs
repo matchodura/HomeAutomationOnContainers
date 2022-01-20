@@ -11,6 +11,9 @@ using Logging.API.Options;
 using Logging.API.Services.MQTT;
 using Microsoft.Extensions.Hosting;
 using Logging.API.Settings;
+using Logging.API.Services;
+using Logging.API.Helpers;
+using AutoMapper;
 
 namespace Logging.API.Extensions
 {
@@ -25,22 +28,19 @@ namespace Logging.API.Extensions
                 options.ReportApiVersions = true;
             });
 
-
+            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+         
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             services.AddDbContext<RpiDataContext>(options =>
             {
-
                 string connStr = config.GetConnectionString("DefaultConnection");
-
-
-                options.UseNpgsql(connStr);
-
+                options.UseNpgsql(connStr);             
             });
 
             services.AddMqttClientHostedService();
 
-            //services.AddHostedService<DataPollingService>();
+            services.AddHostedService<DataPollingService>();
 
             return services;
         }

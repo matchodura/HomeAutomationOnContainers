@@ -15,15 +15,12 @@ namespace Logging.API.Services.MQTT
     {
         private IMqttClient mqttClient;
         private IMqttClientOptions options;
-        private readonly ILogger _logger;
-
+  
         private string _response;
         private string _topic;
 
         public MqttClientService(IMqttClientOptions options)
-        {
-            //ILogger logger,
-           // _logger = logger;
+        {            
             this.options = options;
             mqttClient = new MqttFactory().CreateMqttClient();
             ConfigureMqttClient();

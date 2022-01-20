@@ -9,6 +9,8 @@ namespace Logging.API.Interfaces
     {
         IMijiaRepository MijiaRepository { get; }
 
+        IDHTRepository DHTRepository { get; }
+
         Task<bool> Complete();
 
         bool HasChanges();

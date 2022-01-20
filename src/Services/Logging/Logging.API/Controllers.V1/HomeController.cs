@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 using Logging.API.Services.MQTT;
 using System.Threading;
 using Logging.API.DTOs;
+using AutoMapper;
+using Entities.DHT22;
+using static Logging.API.Extensions.DateTimeExtensions;
 
 namespace Logging.API.Controllers
 {
@@ -18,13 +21,15 @@ namespace Logging.API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IMqttClientService _mqttClientService;
 
 
-        public HomeController(ILogger logger, IUnitOfWork unitOfWork, MqttClientServiceProvider provider)
+        public HomeController(ILogger logger, IUnitOfWork unitOfWork, MqttClientServiceProvider provider, IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
             _mqttClientService = provider.MqttClientService;
         }
 
@@ -119,7 +124,7 @@ namespace Logging.API.Controllers
         }
 
         [HttpGet]
-        [Route("MQTT")]
+        [Route("mqtt")]
         public async Task<ActionResult> GetValuesFromSensor()
         {
             string topic = "cmnd/czujnik/status";
@@ -135,11 +140,35 @@ namespace Logging.API.Controllers
 
             if (!string.IsNullOrEmpty(response))
             {
-                DHT22 dHT22 = JsonSerializer.Deserialize<DHT22>(response);
+                DHT22DTO serializedResponse = JsonSerializer.Deserialize<DHT22DTO>(response);
 
-                return Ok(dHT22);
+                var result = _mapper.Map<DHT22>(serializedResponse);
+
+                result.SensorName = "testowy";
+
+                //if not used - failes see-> https://github.com/npgsql/efcore.pg/issues/2000
+                var currentDate = DateTime.UtcNow;
+                result.Time = currentDate;
+
+                _unitOfWork.DHTRepository.AddValuesForDHT(result);
+
+                if (await _unitOfWork.Complete()) return Ok(result);
+
             }
+
             return NoContent();
-        }       
+        }
+
+        [HttpGet]
+        [Route("mqtt/values")]
+        public async Task<ActionResult<IEnumerable<Mijia>>> GetAllDHTValues([FromQuery] string sensorName)
+        {
+            var dhtValues = await _unitOfWork.DHTRepository.GetAllValuesForDht(sensorName);
+
+            if (dhtValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
+
+            return Ok(dhtValues);
+
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Entities.BLE;
+using Entities.DHT22;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace Logging.API.Data
 
         public DbSet<Mijia> Mijias { get; set; }
         public DbSet<Device> Devices { get; set; }
+        public DbSet<DHT22> DHTs { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

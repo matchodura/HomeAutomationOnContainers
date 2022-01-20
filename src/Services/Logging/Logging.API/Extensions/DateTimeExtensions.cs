@@ -4,13 +4,21 @@ namespace Logging.API.Extensions
 {
     public static class DateTimeExtensions
     {
-        public static DateTime ConvertTime(this double timestampLinux)
+        public static DateTime? SetKindUtc(this DateTime? dateTime)
         {
-            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(timestampLinux).ToLocalTime();
-
-            return dateTime;
+            if (dateTime.HasValue)
+            {
+                return dateTime.Value.SetKindUtc();
+            }
+            else
+            {
+                return null;
+            }
         }
-
+        public static DateTime SetKindUtc(this DateTime dateTime)
+        {
+            if (dateTime.Kind == DateTimeKind.Utc) { return dateTime; }
+            return DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
+        }
     }
 }

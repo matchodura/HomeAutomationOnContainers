@@ -33,6 +33,9 @@ namespace Logging.API
                 logger.LogError(ex, "An error occured duing migratiopn");
             }
 
+            //allow adding DateTime objects to postgresql
+            //AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
             await host.RunAsync();
         }
 

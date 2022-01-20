@@ -1,68 +1,112 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using AutoMapper;
+using Entities.DHT22;
+using Logging.API.DTOs;
+using Logging.API.Interfaces;
+using Logging.API.Services.MQTT;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SensorLogging.API.Infrasctructure.Services
+namespace Logging.API.Services
 {
-    public class DataPollingService : BackgroundService
+    public class DataPollingService : IHostedService, IDisposable
     {
         private int executionCount = 0;
         private readonly ILogger _logger;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IMqttClientService _mqttClientService;
         private Timer _timer = null!;
+        private readonly IServiceScopeFactory _scopeFactory;
+
 
         public DataPollingService(ILogger logger)
         {
             _logger = logger;
         }
 
-        //public override async Task ExecuteAsync(CancellationToken stoppingToken)
+        //public DataPollingService(ILogger logger, IUnitOfWork unitOfWork, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
         //{
-        //    _logger.Information("Timed Hosted Service running.");
-
-        //    _timer = new Timer(DoWork, null, TimeSpan.Zero,
-        //        TimeSpan.FromSeconds(5));
-
+        //    _logger = logger;
+        //    _mapper = mapper;
+        //    _mqttClientService = provider.MqttClientService;
+        //    _unitOfWork = unitOfWork;
+        //    _scopeFactory = scopeFactory;
         //}
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("DataPollingService is starting.");
+            _logger.Information("Data Polling Service running.");
 
-            stoppingToken.Register(() => _logger.Information("#1 DataPollingService background task is stopping."));
+            _timer = new Timer(DoWork, null, TimeSpan.Zero,
+                TimeSpan.FromSeconds(15));
 
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                _logger.Information("DataPollingService background task is doing background work.");
-
-                //CheckConfirmedGracePeriodOrders();
-
-                await Task.Delay(5000, stoppingToken);
-            }
-
-            _logger.Information("DataPollingService background task is stopping.");
+            return Task.CompletedTask;
         }
 
+        private async void DoWork(object state)
+        {
+            var count = Interlocked.Increment(ref executionCount);
 
-        //private void DoWork(object? state)
-        //{
-        //    var count = Interlocked.Increment(ref executionCount);
+            //TODO rethink it
+            //using (var scope = _scopeFactory.CreateScope())
+            //{
 
-        //    _logger.Information(
-        //        "Timed Hosted Service is working. Count: {Count}", count);
-        //}
 
-        //public async Task StopAsync(CancellationToken stoppingToken)
-        //{
-        //    _logger.Information("Timed Hosted Service is stopping.");
+            //    var homeRepo = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        //    _timer?.Change(Timeout.Infinite, 0);
+            //    string topic = "cmnd/czujnik/status";
+            //    string payload = "10";
 
-        //     await Task.CompletedTask;
-        //}
+            //    _logger.Information("dupa");
 
+            //    string subscribeTopic = "stat/czujnik/STATUS10";
+
+            //    await _mqttClientService.SetupTopic(subscribeTopic);
+            //    await _mqttClientService.PublishMessage(topic, payload);
+            //    var response = _mqttClientService.GetResponse();
+
+            //        if (!string.IsNullOrEmpty(response))
+            //        {
+            //            DHT22DTO serializedResponse = JsonSerializer.Deserialize<DHT22DTO>(response);
+
+            //            var result = _mapper.Map<DHT22>(serializedResponse);
+
+            //            result.SensorName = "testowy";
+
+            //            //if not used - failes see-> https://github.com/npgsql/efcore.pg/issues/2000
+            //            var currentDate = DateTime.UtcNow;
+            //            result.Time = currentDate;
+
+            //            homeRepo.DHTRepository.AddValuesForDHT(result);
+
+            //            await homeRepo.Complete();
+            //        }
+            //}
+
+
+            _logger.Information(
+                "Data Polling Service is working. Count: {Count}", count);
+        }
+
+        public Task StopAsync(CancellationToken stoppingToken)
+        {
+            _logger.Information("Timed Hosted Service is stopping.");
+
+            _timer?.Change(Timeout.Infinite, 0);
+
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
+        }
     }
 }

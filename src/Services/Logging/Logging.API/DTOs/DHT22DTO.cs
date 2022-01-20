@@ -2,8 +2,7 @@
 using System;
 
 namespace Logging.API.DTOs
-{
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+{    
     public class AM2301
     {
         public double Temperature { get; set; }
@@ -18,7 +17,7 @@ namespace Logging.API.DTOs
         public string TempUnit { get; set; }
     }
 
-    public class DHT22
+    public class DHT22DTO
     {
         public StatusSNS StatusSNS { get; set; }
     }
