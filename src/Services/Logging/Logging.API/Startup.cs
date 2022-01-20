@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Logging.API.Settings;
 
 namespace Logging.API
 {
@@ -23,7 +24,31 @@ namespace Logging.API
         public Startup(IConfiguration configuration)
         {
             _config = configuration;
+            MapConfiguration();
         }
+
+        private void MapConfiguration()
+        {
+            MapBrokerHostSettings();
+            MapClientSettings();
+        }
+
+        private void MapBrokerHostSettings()
+        {
+            BrokerHostSettings brokerHostSettings = new BrokerHostSettings();
+            _config.GetSection(nameof(BrokerHostSettings)).Bind(brokerHostSettings);
+            AppSettingsProvider.BrokerHostSettings = brokerHostSettings;
+        }
+
+        private void MapClientSettings()
+        {
+            ClientSettings clientSettings = new ClientSettings();
+            _config.GetSection(nameof(ClientSettings)).Bind(clientSettings);
+            AppSettingsProvider.ClientSettings = clientSettings;
+        }
+
+
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

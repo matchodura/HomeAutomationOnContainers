@@ -1,9 +1,6 @@
 ﻿using Entities;
-using Entities.BLE;
 using Microsoft.AspNetCore.Mvc;
 using Logging.API.Utilities;
-using Logging.API.Controllers;
-using Logging.API.Extensions;
 using Logging.API.Interfaces;
 using Serilog;
 using System;
@@ -11,6 +8,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Logging.API.Services.MQTT;
+using System.Threading;
+using Logging.API.DTOs;
 
 namespace Logging.API.Controllers
 {
@@ -18,11 +18,14 @@ namespace Logging.API.Controllers
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMqttClientService _mqttClientService;
 
-        public HomeController(ILogger logger, IUnitOfWork unitOfWork)
+
+        public HomeController(ILogger logger, IUnitOfWork unitOfWork, MqttClientServiceProvider provider)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _mqttClientService = provider.MqttClientService;
         }
 
         [HttpGet]
@@ -111,14 +114,32 @@ namespace Logging.API.Controllers
                 _logger.Error("Failed obtaining results from running bash script!");
 
                 return BadRequest("Failed getting bash results!");
-            }
-
-            
-
-
+            }          
             return Ok(bashResult);
         }
 
-        //TODO getting more values Logging provide
+        [HttpGet]
+        [Route("MQTT")]
+        public async Task<ActionResult> GetValuesFromSensor()
+        {
+            string topic = "cmnd/czujnik/status";
+            string payload = "10";
+
+            _logger.Information("dupa");
+
+            string subscribeTopic = "stat/czujnik/STATUS10";
+
+            await _mqttClientService.SetupTopic(subscribeTopic);
+            await _mqttClientService.PublishMessage(topic, payload);    
+            var response = _mqttClientService.GetResponse();
+
+            if (!string.IsNullOrEmpty(response))
+            {
+                DHT22 dHT22 = JsonSerializer.Deserialize<DHT22>(response);
+
+                return Ok(dHT22);
+            }
+            return NoContent();
+        }       
     }
 }

@@ -35,6 +35,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeControl.UnitTests", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "src\Common\Entities\Entities.csproj", "{7794BF7D-C077-4CF4-A3A0-F9C7B9C608BA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MQTTClient", "src\Common\MQTTClient\MQTTClient.csproj", "{66153DA7-BCE8-4007-8A03-DF65A89E5BD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{7794BF7D-C077-4CF4-A3A0-F9C7B9C608BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7794BF7D-C077-4CF4-A3A0-F9C7B9C608BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7794BF7D-C077-4CF4-A3A0-F9C7B9C608BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66153DA7-BCE8-4007-8A03-DF65A89E5BD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66153DA7-BCE8-4007-8A03-DF65A89E5BD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66153DA7-BCE8-4007-8A03-DF65A89E5BD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66153DA7-BCE8-4007-8A03-DF65A89E5BD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 		{CE390A2C-346B-4827-ACD6-0C3929378C68} = {B4F943E6-E2E5-4171-AD7B-CE402733B0C0}
 		{4DF70602-ED66-4F72-9E9A-07ADAA2A586A} = {DC2CBAD9-BBB7-4C8D-AC85-B626748B837D}
 		{7794BF7D-C077-4CF4-A3A0-F9C7B9C608BA} = {2E04DADF-D8FA-4BC4-931B-3C8478288749}
+		{66153DA7-BCE8-4007-8A03-DF65A89E5BD6} = {2E04DADF-D8FA-4BC4-931B-3C8478288749}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {118D9812-E1AA-4E23-84FA-600A845ED011}

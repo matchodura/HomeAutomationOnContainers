@@ -6,6 +6,11 @@ using Logging.API.Data;
 using Logging.API.Interfaces;
 using Serilog;
 using System;
+using MQTTnet.Client.Options;
+using Logging.API.Options;
+using Logging.API.Services.MQTT;
+using Microsoft.Extensions.Hosting;
+using Logging.API.Settings;
 
 namespace Logging.API.Extensions
 {
@@ -33,11 +38,51 @@ namespace Logging.API.Extensions
 
             });
 
+            services.AddMqttClientHostedService();
 
             //services.AddHostedService<DataPollingService>();
 
             return services;
         }
+
+        public static IServiceCollection AddMqttClientHostedService(this IServiceCollection services)
+        {
+            services.AddMqttClientServiceWithConfig(aspOptionBuilder =>
+            {
+                var clientSettinigs = AppSettingsProvider.ClientSettings;
+                var brokerHostSettings = AppSettingsProvider.BrokerHostSettings;
+
+                aspOptionBuilder
+                .WithCredentials(clientSettinigs.UserName, clientSettinigs.Password)
+                .WithClientId(clientSettinigs.Id)
+                .WithTcpServer(brokerHostSettings.Host, brokerHostSettings.Port);
+            });
+            return services;
+        }
+
+        private static IServiceCollection AddMqttClientServiceWithConfig(this IServiceCollection services, Action<AspCoreMqttClientOptionBuilder> configure)
+        {
+            services.AddSingleton<IMqttClientOptions>(serviceProvider =>
+            {
+                var optionBuilder = new AspCoreMqttClientOptionBuilder(serviceProvider);
+                configure(optionBuilder);
+                return optionBuilder.Build();
+            });
+            services.AddSingleton<MqttClientService>();
+            services.AddSingleton<IHostedService>(serviceProvider =>
+            {
+                return serviceProvider.GetService<MqttClientService>();
+            });
+            services.AddSingleton<MqttClientServiceProvider>(serviceProvider =>
+            {
+                var mqttClientService = serviceProvider.GetService<MqttClientService>();
+                var mqttClientServiceProvider = new MqttClientServiceProvider(mqttClientService);
+                return mqttClientServiceProvider;
+            });
+            return services;
+        }
+
+
 
         private static ILogger CreateSerilogLogger(IConfiguration configuration)
         {
@@ -47,7 +92,7 @@ namespace Logging.API.Extensions
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("_service", "Logging")
+                .Enrich.WithProperty("_service", "Logging.API")
                 .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Console()
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
