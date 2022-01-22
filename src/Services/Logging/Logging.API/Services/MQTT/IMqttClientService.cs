@@ -12,10 +12,8 @@ namespace Logging.API.Services.MQTT
                                           IMqttApplicationMessageReceivedHandler
     {
 
-        Task PublishMessage(string topic, string payload);
-
-        Task SetupTopic(string topic);
-
+        Task PublishMessage(string commandTopic, string payload);
+        Task SetupSubscriptionTopic(string subscriptionTopic);
         string GetResponse();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using Entities.DHT22;
+using Entities.DHT;
+using Logging.API.Data;
 using Logging.API.DTOs;
+using Logging.API.Helpers;
 using Logging.API.Interfaces;
 using Logging.API.Services.MQTT;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,33 +21,31 @@ namespace Logging.API.Services
     {
         private int executionCount = 0;
         private readonly ILogger _logger;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IMqttClientService _mqttClientService;
         private Timer _timer = null!;
         private readonly IServiceScopeFactory _scopeFactory;
 
 
-        public DataPollingService(ILogger logger)
-        {
-            _logger = logger;
-        }
-
-        //public DataPollingService(ILogger logger, IUnitOfWork unitOfWork, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
+        //public DataPollingService(ILogger logger)
         //{
         //    _logger = logger;
-        //    _mapper = mapper;
-        //    _mqttClientService = provider.MqttClientService;
-        //    _unitOfWork = unitOfWork;
-        //    _scopeFactory = scopeFactory;
         //}
+
+        public DataPollingService(ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
+        {
+            _logger = logger;
+            _mapper = mapper;
+            _mqttClientService = provider.MqttClientService;
+            _scopeFactory = scopeFactory;
+        }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
             _logger.Information("Data Polling Service running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(60));
 
             return Task.CompletedTask;
         }
@@ -54,42 +54,62 @@ namespace Logging.API.Services
         {
             var count = Interlocked.Increment(ref executionCount);
 
-            //TODO rethink it
-            //using (var scope = _scopeFactory.CreateScope())
-            //{
 
 
-            //    var homeRepo = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-            //    string topic = "cmnd/czujnik/status";
-            //    string payload = "10";
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<IUnitOfWork>();
 
-            //    _logger.Information("dupa");
+                string[] sensorNames = new string[2] {"czujnik_1", "czujnik_2"};
+                string[] tasmotaNames = new string[2] { "DHT11", "AM2301" };
 
-            //    string subscribeTopic = "stat/czujnik/STATUS10";
+               
+                foreach (string name in sensorNames)
+                {
+                    string commandTopic = $"cmnd/pokoj/{name}/status";
+                    //string commandTopic = $"cmnd/pokoj/czujnik_1/status";
+                    string payload = "10";
+                    string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
+                    //string subscriptionTopic = $"stat/pokoj/czujnik_1/STATUS10";
 
-            //    await _mqttClientService.SetupTopic(subscribeTopic);
-            //    await _mqttClientService.PublishMessage(topic, payload);
-            //    var response = _mqttClientService.GetResponse();
+                    await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
 
-            //        if (!string.IsNullOrEmpty(response))
-            //        {
-            //            DHT22DTO serializedResponse = JsonSerializer.Deserialize<DHT22DTO>(response);
+                    await _mqttClientService.PublishMessage(commandTopic, payload);
 
-            //            var result = _mapper.Map<DHT22>(serializedResponse);
+                    var response = _mqttClientService.GetResponse();
 
-            //            result.SensorName = "testowy";
+                    if (!string.IsNullOrEmpty(response))
+                    {
+                        if (response.Contains(@"DHT11"))
+                        {
+                            response = response.Replace(@"DHT11", @"Values");
+                        }
 
-            //            //if not used - failes see-> https://github.com/npgsql/efcore.pg/issues/2000
-            //            var currentDate = DateTime.UtcNow;
-            //            result.Time = currentDate;
+                        if (response.Contains(@"AM2301"))
+                        {
+                            response = response.Replace(@"AM2301", @"Values");
+                        }
 
-            //            homeRepo.DHTRepository.AddValuesForDHT(result);
+                        DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
+                                             
+                        var result = _mapper.Map<DHT>(serializedResponse);
 
-            //            await homeRepo.Complete();
-            //        }
-            //}
+                        result.SensorName = name;
 
+                        //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
+                        var currentDate = DateTime.UtcNow;
+                        result.Time = currentDate;
+                       
+                        context.DHTRepository.AddValuesForDHT(result);
+
+                        await context.Complete();
+                        
+                    }                                   
+                
+                }
+
+            }
 
             _logger.Information(
                 "Data Polling Service is working. Count: {Count}", count);

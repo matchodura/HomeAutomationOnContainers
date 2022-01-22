@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.DHT22
+namespace Entities.DHT
 {
-    public class DHT22
+    public class DHT
     {
         public int Id { get; set; }
         public string SensorName { get; set; }    

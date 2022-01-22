@@ -1,4 +1,4 @@
-﻿using Entities.DHT22;
+﻿using Entities.DHT;
 using Logging.API.Data;
 using Logging.API.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +17,12 @@ namespace Logging.API.Infrastructure.Data
             _context = context;
         }
 
-        public void AddValuesForDHT(DHT22 dht)
+        public void AddValuesForDHT(DHT dht)
         {
             _context.DHTs.Add(dht);
         }
 
-        public async Task<IEnumerable<DHT22>> GetAllValuesForDht(string sensorName)
+        public async Task<IEnumerable<DHT>> GetAllValuesForDht(string sensorName)
         {
             return await _context.DHTs.Where(x => x.SensorName == sensorName).ToListAsync();
         }

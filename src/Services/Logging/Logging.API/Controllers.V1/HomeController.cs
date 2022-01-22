@@ -12,7 +12,7 @@ using Logging.API.Services.MQTT;
 using System.Threading;
 using Logging.API.DTOs;
 using AutoMapper;
-using Entities.DHT22;
+using Entities.DHT;
 using static Logging.API.Extensions.DateTimeExtensions;
 
 namespace Logging.API.Controllers
@@ -127,22 +127,22 @@ namespace Logging.API.Controllers
         [Route("mqtt")]
         public async Task<ActionResult> GetValuesFromSensor()
         {
-            string topic = "cmnd/czujnik/status";
+            string topic = "cmnd/pokoj/czujnik_1/status";
             string payload = "10";
 
             _logger.Information("dupa");
 
-            string subscribeTopic = "stat/czujnik/STATUS10";
+            string subscribeTopic = "stat/pokoj/czujnik_1/STATUS10";
 
-            await _mqttClientService.SetupTopic(subscribeTopic);
+            await _mqttClientService.SetupSubscriptionTopic(subscribeTopic);
             await _mqttClientService.PublishMessage(topic, payload);    
             var response = _mqttClientService.GetResponse();
 
             if (!string.IsNullOrEmpty(response))
             {
-                DHT22DTO serializedResponse = JsonSerializer.Deserialize<DHT22DTO>(response);
+                DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
 
-                var result = _mapper.Map<DHT22>(serializedResponse);
+                var result = _mapper.Map<DHT>(serializedResponse);
 
                 result.SensorName = "testowy";
 

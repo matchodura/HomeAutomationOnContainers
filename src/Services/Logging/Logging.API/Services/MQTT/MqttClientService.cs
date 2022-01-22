@@ -66,10 +66,10 @@ namespace Logging.API.Services.MQTT
             }
         }
 
-        public async Task PublishMessage(string topic, string payload)
+        public async Task PublishMessage(string commandTopic, string payload)
         {
             var messageA = new MqttApplicationMessageBuilder()
-                    .WithTopic(topic)
+                    .WithTopic(commandTopic)
                     .WithPayload(payload)
                     .Build();
 
@@ -95,9 +95,9 @@ namespace Logging.API.Services.MQTT
             await mqttClient.DisconnectAsync();
         }
 
-        public async Task SetupTopic(string topic)
+        public async Task SetupSubscriptionTopic(string subscriptionTopic)
         {
-            _topic = topic;
+            _topic = subscriptionTopic;
             await mqttClient.SubscribeAsync(_topic);
         }
 
