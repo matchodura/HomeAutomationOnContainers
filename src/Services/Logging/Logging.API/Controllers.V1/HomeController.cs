@@ -168,7 +168,17 @@ namespace Logging.API.Controllers
             if (dhtValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
 
             return Ok(dhtValues);
+        }
 
+        [HttpGet]
+        [Route("mqtt/values/last")]
+        public async Task<ActionResult<IEnumerable<Mijia>>> GetLastDHTValue([FromQuery] string sensorName)
+        {
+            var dhtValue = await _unitOfWork.DHTRepository.GetLastValueForDht(sensorName);
+
+            if (dhtValue == null) return NotFound("Sensor with that name does not exist!");
+
+            return Ok(dhtValue);
         }
     }
 }

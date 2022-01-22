@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 using MQTTClient;
 using MQTTnet.Client;
 using System.Text;
+using HomeControl.API.SyncDataServices.Grpc;
 
 namespace HomeControl.API.Controllers
 {
     public class SensorController : BaseApiController
     {
         private readonly ILogger _logger;
+        private readonly ILoggingDataClient _loggingDataclient;
 
-        public SensorController(ILogger logger)
+        public SensorController(ILogger logger, ILoggingDataClient loggingDataclient)
         {
             _logger = logger;
+            _loggingDataclient = loggingDataclient;
         }
 
         [HttpGet]
@@ -56,6 +59,16 @@ namespace HomeControl.API.Controllers
 
 
             return Ok(payload);
+        }
+
+        [HttpGet]
+        [Route("testdht")]
+        public ActionResult GetAllFromLoggingAPI()
+        {
+
+            var result = _loggingDataclient.ReturnAllDhts();
+
+            return Ok(result);
         }
     }
 }

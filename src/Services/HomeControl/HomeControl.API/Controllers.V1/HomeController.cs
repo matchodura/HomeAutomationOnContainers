@@ -18,6 +18,7 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
+        [Route("dupa")]
         public IActionResult Index()
         {
             return new RedirectResult("~/swagger");

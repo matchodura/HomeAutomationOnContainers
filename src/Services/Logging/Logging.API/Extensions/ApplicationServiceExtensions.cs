@@ -12,7 +12,7 @@ using Logging.API.Services.MQTT;
 using Microsoft.Extensions.Hosting;
 using Logging.API.Settings;
 using Logging.API.Services;
-using Logging.API.Helpers;
+using Logging.API.Profiles;
 using AutoMapper;
 
 namespace Logging.API.Extensions
@@ -29,7 +29,7 @@ namespace Logging.API.Extensions
             });
 
             services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
-         
+            services.AddGrpc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             services.AddDbContext<RpiDataContext>(options =>

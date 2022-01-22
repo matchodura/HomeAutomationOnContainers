@@ -2,7 +2,7 @@
 using Entities.DHT;
 using Logging.API.Data;
 using Logging.API.DTOs;
-using Logging.API.Helpers;
+using Logging.API.Profiles;
 using Logging.API.Interfaces;
 using Logging.API.Services.MQTT;
 using Microsoft.Extensions.DependencyInjection;

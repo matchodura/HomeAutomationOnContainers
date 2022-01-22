@@ -22,10 +22,19 @@ namespace Logging.API.Infrastructure.Data
             _context.DHTs.Add(dht);
         }
 
-        public async Task<IEnumerable<DHT>> GetAllValuesForDht(string sensorName)
+        public async Task<List<DHT>> GetAllValues()
+        {
+            return await _context.DHTs.OrderByDescending(x => x.Id).ToListAsync();
+        }
+
+        public async Task<List<DHT>> GetAllValuesForDht(string sensorName)
         {
             return await _context.DHTs.Where(x => x.SensorName == sensorName).ToListAsync();
         }
 
+        public async Task<DHT> GetLastValueForDht(string sensorName)
+        {
+            return await _context.DHTs.Where(x => x.SensorName == sensorName).LastOrDefaultAsync();
+        }
     }
 }

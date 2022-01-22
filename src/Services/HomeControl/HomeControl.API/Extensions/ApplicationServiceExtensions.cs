@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HomeControl.API.SyncDataServices.Grpc;
+using Logging.API.Profiles;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -28,7 +30,8 @@ namespace HomeControl.API.Extensions
             //});
 
             services.AddHttpClient();
-
+            services.AddSingleton<ILoggingDataClient, LoggingDataClient>();
+            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
 

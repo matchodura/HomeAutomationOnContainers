@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Logging.API.Settings;
+using Logging.API.Services.Grpc;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace Logging.API
 {
@@ -88,6 +91,12 @@ namespace Logging.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapGrpcService<GrpcLoggingService>();
+
+                endpoints.MapGet("/protos/sensors.proto", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText("Protos/sensors.proto"));
+                });
             });
 
 
