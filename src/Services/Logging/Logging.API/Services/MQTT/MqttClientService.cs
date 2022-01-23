@@ -39,7 +39,6 @@ namespace Logging.API.Services.MQTT
             var payloadText = Encoding.UTF8.GetString(
                 eventArgs?.ApplicationMessage?.Payload ?? Array.Empty<byte>());
 
-
             _response = payloadText;
 
             return Task.CompletedTask;
@@ -98,7 +97,7 @@ namespace Logging.API.Services.MQTT
         public async Task SetupSubscriptionTopic(string subscriptionTopic)
         {
             _topic = subscriptionTopic;
-            await mqttClient.SubscribeAsync(_topic);
+            await mqttClient.SubscribeAsync(subscriptionTopic);
         }
 
         public Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
@@ -106,6 +105,11 @@ namespace Logging.API.Services.MQTT
             //_logger.LogInformation("MQTT client connected!");
 
             return Task.CompletedTask;
+        }
+
+        public string ReturnCurrentTopic()
+        {
+            return _topic;
         }
     }
 }

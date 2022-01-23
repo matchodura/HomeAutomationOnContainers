@@ -54,9 +54,6 @@ namespace Logging.API.Services
         {
             var count = Interlocked.Increment(ref executionCount);
 
-
-
-
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<IUnitOfWork>();
@@ -65,19 +62,26 @@ namespace Logging.API.Services
                 string[] tasmotaNames = new string[2] { "DHT11", "AM2301" };
 
                
-                foreach (string name in sensorNames)
+                foreach (var (name, index) in sensorNames.Select((value, i) => (value,i)))
                 {
                     string commandTopic = $"cmnd/pokoj/{name}/status";
-                    //string commandTopic = $"cmnd/pokoj/czujnik_1/status";
                     string payload = "10";
                     string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
-                    //string subscriptionTopic = $"stat/pokoj/czujnik_1/STATUS10";
-
+                    string response = string.Empty;
                     await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
+                
+                    do
+                    {
+                        await _mqttClientService.PublishMessage(commandTopic, payload);
+                        response = _mqttClientService.GetResponse();
 
-                    await _mqttClientService.PublishMessage(commandTopic, payload);
+                        if (string.IsNullOrEmpty(response)) continue;
 
-                    var response = _mqttClientService.GetResponse();
+                        if (response.Contains(tasmotaNames[index])) break;
+
+                    } while (true);
+                                       
+
 
                     if (!string.IsNullOrEmpty(response))
                     {
@@ -103,16 +107,21 @@ namespace Logging.API.Services
                        
                         context.DHTRepository.AddValuesForDHT(result);
 
-                        await context.Complete();
-                        
+                        if(await context.Complete())
+                        {
+                            continue;
+                        };
+                                            
+
+                        _logger.Information(
+                                 "Data Polling Service is working. Polled sensor {name}", name);
                     }                                   
                 
                 }
 
             }
 
-            _logger.Information(
-                "Data Polling Service is working. Count: {Count}", count);
+
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

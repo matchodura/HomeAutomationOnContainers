@@ -138,23 +138,23 @@ namespace Logging.API.Controllers
             await _mqttClientService.PublishMessage(topic, payload);    
             var response = _mqttClientService.GetResponse();
 
-            if (!string.IsNullOrEmpty(response))
-            {
-                DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
+            //if (!string.IsNullOrEmpty(response))
+            //{
+            //    DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
 
-                var result = _mapper.Map<DHT>(serializedResponse);
+            //    var result = _mapper.Map<DHT>(serializedResponse);
 
-                result.SensorName = "testowy";
+            //    result.SensorName = "testowy";
 
-                //if not used - failes see-> https://github.com/npgsql/efcore.pg/issues/2000
-                var currentDate = DateTime.UtcNow;
-                result.Time = currentDate;
+            //    //if not used - failes see-> https://github.com/npgsql/efcore.pg/issues/2000
+            //    var currentDate = DateTime.UtcNow;
+            //    result.Time = currentDate;
 
-                _unitOfWork.DHTRepository.AddValuesForDHT(result);
+            //    _unitOfWork.DHTRepository.AddValuesForDHT(result);
 
-                if (await _unitOfWork.Complete()) return Ok(result);
+            //    if (await _unitOfWork.Complete()) return Ok(result);
 
-            }
+            //}
 
             return NoContent();
         }
