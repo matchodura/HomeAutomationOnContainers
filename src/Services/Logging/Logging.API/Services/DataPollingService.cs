@@ -69,19 +69,22 @@ namespace Logging.API.Services
                     string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
                     string response = string.Empty;
                     await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
-                
+                    int i = 0;
+
                     do
-                    {
+                    {                      
+
                         await _mqttClientService.PublishMessage(commandTopic, payload);
                         response = _mqttClientService.GetResponse();
 
                         if (string.IsNullOrEmpty(response)) continue;
-
+                        i++;
                         if (response.Contains(tasmotaNames[index])) break;
 
-                    } while (true);
-                                       
+                    } while (i > 10);
 
+                    //if we didnt receive data for specified sensor, move to the next one
+                    if (i > 10) continue;
 
                     if (!string.IsNullOrEmpty(response))
                     {
