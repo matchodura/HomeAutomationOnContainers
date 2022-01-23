@@ -27,14 +27,23 @@ namespace HomeControl.API.SyncDataServices.Grpc
             var client = new GrpcLogging.GrpcLoggingClient(channel);
             var request = new GetAllRequest();
 
+            List<DHT> dhts = new List<DHT>();
             try
             {
                 var reply = client.GetAllLoggingValues(request);
-                return _mapper.Map<List<DHT>>(reply.Dht);
+
+                foreach(var item in reply.Dht)
+                {
+                    dhts.Add(_mapper.Map<DHT>(item));
+                }
+
+
+                //return _mapper.Map<List<DHT>>(reply.Dht);
+                return dhts;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Could not coll grpc service {ex.Message}");
+                Console.WriteLine($"Could not call grpc service {ex.Message}");
                 return null;
             }
 

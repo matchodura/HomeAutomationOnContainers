@@ -2,7 +2,7 @@
 
 import "google/protobuf/timestamp.proto";
 
-option csharp_namespace = "Logging.API";
+option csharp_namespace = "HomeControl.API";
 
 service GrpcLogging{
     rpc GetAllLoggingValues(GetAllRequest) returns (LoggingApiResponse);

@@ -1,4 +1,5 @@
-﻿using HomeControl.API.SyncDataServices.Grpc;
+﻿using HomeControl.API.Profiles;
+using HomeControl.API.SyncDataServices.Grpc;
 using Logging.API.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,10 +30,10 @@ namespace HomeControl.API.Extensions
             //    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
             //});
 
-            services.AddHttpClient();
-            services.AddSingleton<ILoggingDataClient, LoggingDataClient>();
-            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
 
+            services.AddAutoMapper(typeof(AutoMapperHomeControlProfile).Assembly);
+            services.AddHttpClient();
+            services.AddSingleton<ILoggingDataClient, LoggingDataClient>();       
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
 
             //services.AddHostedService<DataPollingService>();

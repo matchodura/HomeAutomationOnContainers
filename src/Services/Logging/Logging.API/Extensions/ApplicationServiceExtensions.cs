@@ -28,7 +28,7 @@ namespace Logging.API.Extensions
                 options.ReportApiVersions = true;
             });
 
-            services.AddAutoMapper(typeof(AutoMapperProfile).Assembly);
+            services.AddAutoMapper(typeof(AutoMapperLoggingProfile).Assembly);
             services.AddGrpc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
