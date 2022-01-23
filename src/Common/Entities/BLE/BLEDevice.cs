@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.BLE
 {
-    public class Device
+    public class BLEDevice
     {
         public int Id { get; set; }
         public string Name { get; set; }

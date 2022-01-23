@@ -9,7 +9,6 @@ namespace Logging.API.Interfaces
         void AddValuesForDHT(DHT dht);
         Task<List<DHT>> GetAllValuesForDht(string sensorName);
         Task<List<DHT>> GetAllValues();
-
         Task<DHT> GetLastValueForDht(string sensorName);
     }
 }

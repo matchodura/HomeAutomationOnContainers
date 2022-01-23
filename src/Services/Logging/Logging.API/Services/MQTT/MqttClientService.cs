@@ -98,6 +98,7 @@ namespace Logging.API.Services.MQTT
         {
             _topic = subscriptionTopic;
             await mqttClient.SubscribeAsync(subscriptionTopic);
+
         }
 
         public Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)

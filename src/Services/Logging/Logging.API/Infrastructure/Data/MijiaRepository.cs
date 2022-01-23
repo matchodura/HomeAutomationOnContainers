@@ -19,10 +19,10 @@ namespace Logging.API.Data
             _context = context;
         }
 
-        public void AddDevice(Device device)
-        {
-            _context.Devices.Add(device);  
-        }
+        //public void AddDevice(BLEDevice device)
+        //{
+        //    _context.BLEDevices.Add(device);  
+        //}
 
         public void AddValuesForMijia(Mijia mijia)
         {

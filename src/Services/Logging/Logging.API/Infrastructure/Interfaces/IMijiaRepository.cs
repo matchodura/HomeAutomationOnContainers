@@ -11,6 +11,6 @@ namespace Logging.API.Interfaces
     {
         void AddValuesForMijia(Mijia mijia);
         Task<IEnumerable<Mijia>> GetAllValuesForMijia(string sensorName);
-        void AddDevice(Device device);
+      //  void AddDevice(BLEDevice device);
     }
 }

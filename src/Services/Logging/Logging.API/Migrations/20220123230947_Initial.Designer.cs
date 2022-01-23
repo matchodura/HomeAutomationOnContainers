@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logging.API.Migrations
 {
     [DbContext(typeof(RpiDataContext))]
-    [Migration("20220120175446_dhts")]
-    partial class dhts
+    [Migration("20220123230947_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace Logging.API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Entities.BLE.Device", b =>
+            modelBuilder.Entity("Entities.Configuration.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,14 +32,28 @@ namespace Logging.API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("MacAddress")
+                    b.Property<DateTime>("DateModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FriendlyName")
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<int>("Function")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("IPAddress")
                         .HasColumnType("text");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
+                    b.Property<string>("MosquittoPassword")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MosquittoUsername")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Room")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TasmotaDevice")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -47,7 +61,7 @@ namespace Logging.API.Migrations
                     b.ToTable("Devices");
                 });
 
-            modelBuilder.Entity("Entities.DHT22.DHT22", b =>
+            modelBuilder.Entity("Entities.DHT.DHT", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

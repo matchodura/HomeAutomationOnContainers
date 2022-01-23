@@ -14,6 +14,7 @@ using Logging.API.DTOs;
 using AutoMapper;
 using Entities.DHT;
 using static Logging.API.Extensions.DateTimeExtensions;
+using Entities.Configuration;
 
 namespace Logging.API.Controllers
 {
@@ -179,6 +180,40 @@ namespace Logging.API.Controllers
             if (dhtValue == null) return NotFound("Sensor with that name does not exist!");
 
             return Ok(dhtValue);
+        }
+
+        [HttpGet]
+        [Route("devices")]
+        public async Task<ActionResult<IEnumerable<Device>>> GetAllDevices()
+        {
+            var devices = await _unitOfWork.DeviceRepository.GetAllConfiguredDevices();
+
+            if (devices.Count() == 0) return NotFound("No devices are currently configured!");
+
+            return Ok(devices);
+        }
+
+        [HttpPost]
+        [Route("devices")]
+        public async Task<ActionResult<IEnumerable<Mijia>>> AddNewDevice([FromBody] DeviceDTO device)
+        {
+            var newDevice = _mapper.Map<Device>(device);
+
+
+            var devices = await _unitOfWork.DeviceRepository.GetAllConfiguredDevices();
+
+            //TODO fix this
+            if (devices.Contains(newDevice)) return Conflict("Device already exists in database!");
+
+            //postgresql bug
+            var currentDate = DateTime.UtcNow;
+            newDevice.DateModified = currentDate;
+
+            _unitOfWork.DeviceRepository.AddDevice(newDevice);
+            await _unitOfWork.Complete();
+
+            //TODO maybe a redirection of some sort on completion?
+            return Ok(device);
         }
     }
 }

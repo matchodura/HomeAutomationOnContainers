@@ -26,12 +26,6 @@ namespace Logging.API.Services
         private Timer _timer = null!;
         private readonly IServiceScopeFactory _scopeFactory;
 
-
-        //public DataPollingService(ILogger logger)
-        //{
-        //    _logger = logger;
-        //}
-
         public DataPollingService(ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
         {
             _logger = logger;
@@ -45,7 +39,7 @@ namespace Logging.API.Services
             _logger.Information("Data Polling Service running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(60));
+                TimeSpan.FromSeconds(30));
 
             return Task.CompletedTask;
         }
@@ -53,79 +47,92 @@ namespace Logging.API.Services
         private async void DoWork(object state)
         {
             var count = Interlocked.Increment(ref executionCount);
-
-            using (var scope = _scopeFactory.CreateScope())
+            string[] sensorNames = new string[2] { "czujnik_1", "czujnik_2" };
+            string[] tasmotaNames = new string[2] { "DHT11", "AM2301" };
+            
+            foreach (var (name, index) in sensorNames.Select((value, i) => (value, i)))
             {
-                var context = scope.ServiceProvider.GetService<IUnitOfWork>();
+                string commandTopic = $"cmnd/pokoj/{name}/status";
+                string payload = "10";
+                string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
+                string response = string.Empty;
+                int failCount = 0;
 
-                string[] sensorNames = new string[2] {"czujnik_1", "czujnik_2"};
-                string[] tasmotaNames = new string[2] { "DHT11", "AM2301" };
 
-               
-                foreach (var (name, index) in sensorNames.Select((value, i) => (value,i)))
+                do
                 {
-                    string commandTopic = $"cmnd/pokoj/{name}/status";
-                    string payload = "10";
-                    string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
-                    string response = string.Empty;
                     await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
-                    int i = 0;
+                    await _mqttClientService.PublishMessage(commandTopic, payload);
+                    response = _mqttClientService.GetResponse();
 
-                    do
-                    {                      
+                    if (string.IsNullOrEmpty(response)) continue;
+                   
+                    var temp = tasmotaNames[index];
 
-                        await _mqttClientService.PublishMessage(commandTopic, payload);
-                        response = _mqttClientService.GetResponse();
-
-                        if (string.IsNullOrEmpty(response)) continue;
-                        i++;
-                        if (response.Contains(tasmotaNames[index])) break;
-
-                    } while (i > 10);
-
-                    //if we didnt receive data for specified sensor, move to the next one
-                    if (i > 10) continue;
-
-                    if (!string.IsNullOrEmpty(response))
+                    if (response.Contains($@"{temp}"))
                     {
-                        if (response.Contains(@"DHT11"))
-                        {
-                            response = response.Replace(@"DHT11", @"Values");
-                        }
+                        break;
+                    }
+                    else
+                    {
+                        failCount++;
+                    }    
 
-                        if (response.Contains(@"AM2301"))
-                        {
-                            response = response.Replace(@"AM2301", @"Values");
-                        }
+                } while (failCount<=10);
 
-                        DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
-                                             
-                        var result = _mapper.Map<DHT>(serializedResponse);
+                if (failCount >= 10) continue;
 
-                        result.SensorName = name;
 
-                        //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
-                        var currentDate = DateTime.UtcNow;
-                        result.Time = currentDate;
-                       
+
+                if (!string.IsNullOrEmpty(response))
+                {
+                    if (response.Contains(@"DHT11"))
+                    {
+                        response = response.Replace(@"DHT11", @"Values");
+                    }
+
+                    if (response.Contains(@"AM2301"))
+                    {
+                        response = response.Replace(@"AM2301", @"Values");
+                    }
+
+                    DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
+
+                    var result = _mapper.Map<DHT>(serializedResponse);
+
+                    result.SensorName = name;
+
+                    //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
+                    var currentDate = DateTime.UtcNow;
+                    result.Time = currentDate;
+
+
+                    using (var scope = _scopeFactory.CreateScope())
+                    {
+                        var context = scope.ServiceProvider.GetService<IUnitOfWork>();
+
+
                         context.DHTRepository.AddValuesForDHT(result);
 
                         await context.Complete();
-                    
-                                        
 
-                        _logger.ForContext("Sensor", result.SensorName)
-                            .ForContext("Temperature", result.Temperature)
-                            .ForContext("Humidity", result.Humidity)
-                            .ForContext("DewPoint", result.DewPoint)
-                            .ForContext("Time", result.Time)
-                            .Information(
-                                 "Data Polling Service is working. Polled sensor {name}", name);
-                    }                                   
-                
+
+                    }
+
+
+
+                    _logger.ForContext("Sensor", result.SensorName)
+                        .ForContext("Temperature", result.Temperature)
+                        .ForContext("Humidity", result.Humidity)
+                        .ForContext("DewPoint", result.DewPoint)
+                        .ForContext("Time", result.Time)
+                        .Information(
+                             "Data Polling Service is working. Polled sensor {name}", name);
                 }
 
             }
+
+ 
 
 
         }
