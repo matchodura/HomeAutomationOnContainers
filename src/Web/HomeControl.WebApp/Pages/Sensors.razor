@@ -1,0 +1,53 @@
+﻿@page "/sensors"
+
+<PageTitle>Sensors</PageTitle>
+
+@using Entities.DHT
+@using HomeControl.WebApp.Data
+@inject SensorService SensorService
+
+<h1>Sensors</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (sensorData == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Temp. (C)</th>
+                <th>Humidity</th>
+                <th>DewPoint</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var data in sensorData)
+            {
+                <tr>
+                    <td>@data.Id</td>
+                    <td>@data.SensorName</td>
+                    <td>@data.Temperature</td>
+                    <td>@data.Humidity</td>
+                    <td>@data.DewPoint</td>
+                    <td>@data.Time</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<DHT>? sensorData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        sensorData = await SensorService.GetSensorData();
+    }
+}

@@ -110,13 +110,16 @@ namespace Logging.API.Services
                        
                         context.DHTRepository.AddValuesForDHT(result);
 
-                        if(await context.Complete())
-                        {
-                            continue;
-                        };
-                                            
+                        await context.Complete();
+                    
+                                        
 
-                        _logger.Information(
+                        _logger.ForContext("Sensor", result.SensorName)
+                            .ForContext("Temperature", result.Temperature)
+                            .ForContext("Humidity", result.Humidity)
+                            .ForContext("DewPoint", result.DewPoint)
+                            .ForContext("Time", result.Time)
+                            .Information(
                                  "Data Polling Service is working. Polled sensor {name}", name);
                     }                                   
                 

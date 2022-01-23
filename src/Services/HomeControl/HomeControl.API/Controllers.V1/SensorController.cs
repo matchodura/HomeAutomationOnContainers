@@ -9,6 +9,7 @@ using MQTTClient;
 using MQTTnet.Client;
 using System.Text;
 using HomeControl.API.SyncDataServices.Grpc;
+using Entities.DHT;
 
 namespace HomeControl.API.Controllers
 {
@@ -62,8 +63,8 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
-        [Route("testdht")]
-        public ActionResult GetAllFromLoggingAPI()
+        [Route("sensors")]
+        public ActionResult<List<DHT>> GetAllFromLoggingAPI()
         {
 
             var result = _loggingDataclient.ReturnAllDhts();
