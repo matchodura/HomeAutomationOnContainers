@@ -2,6 +2,9 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>425b0e66-43d7-48d0-b996-b6bb9806acc5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +17,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="MQTTnet" Version="3.1.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.2" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1" />
@@ -23,7 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
-    <ProjectReference Include="..\..\..\Common\MQTTClient\MQTTClient.csproj" />
   </ItemGroup>
   <ItemGroup>
 	  <Protobuf Include="Protos\sensors.proto" GrpcServices="Server" />

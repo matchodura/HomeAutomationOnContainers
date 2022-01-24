@@ -6,7 +6,6 @@ using Logging.API.Data;
 using Logging.API.Interfaces;
 using Serilog;
 using System;
-using MQTTnet.Client.Options;
 using Logging.API.Options;
 using Logging.API.Services.MQTT;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +13,7 @@ using Logging.API.Settings;
 using Logging.API.Services;
 using Logging.API.Profiles;
 using AutoMapper;
+using MQTTnet.Client.Options;
 
 namespace Logging.API.Extensions
 {
