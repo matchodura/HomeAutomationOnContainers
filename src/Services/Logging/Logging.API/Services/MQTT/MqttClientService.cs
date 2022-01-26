@@ -39,16 +39,42 @@ namespace Logging.API.Services.MQTT
             var payloadText = Encoding.UTF8.GetString(
                 eventArgs?.ApplicationMessage?.Payload ?? Array.Empty<byte>());
 
-            _response = payloadText;
+            var topic = eventArgs?.ApplicationMessage.Topic ?? string.Empty;
+
+            //TODO make it configurable
+            if (topic == "stat/pokoj/dht/STATUS10")
+            {
+                _response = payloadText;
+            }
+            if (topic == "stat/strych/dht/STATUS10")
+            {
+                _response = payloadText;
+            }
+
+
 
             return Task.CompletedTask;
         }
 
-        //public async Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
-        //{
-        //    System.Console.WriteLine("connected");
-        //    await mqttClient.SubscribeAsync(_topic);
-        //}
+        public async Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
+        {
+            System.Console.WriteLine("connected");
+
+            //TODO make it configurable
+            await mqttClient.SubscribeAsync(
+            new MqttTopicFilter
+            {
+                Topic = "stat/pokoj/dht/STATUS10",
+                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+                
+            },
+            new MqttTopicFilter
+            {
+                Topic = "stat/strych/dht/STATUS10",
+                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+            });
+        }
+         
 
 
         public Task HandleDisconnectedAsync(MqttClientDisconnectedEventArgs eventArgs)
@@ -94,23 +120,14 @@ namespace Logging.API.Services.MQTT
             await mqttClient.DisconnectAsync();
         }
 
-        public async Task SetupSubscriptionTopic(string subscriptionTopic)
-        {
-            _topic = subscriptionTopic;
-            await mqttClient.SubscribeAsync(subscriptionTopic);
-
-        }
-
-        public Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
-        {
-            //_logger.LogInformation("MQTT client connected!");
-
-            return Task.CompletedTask;
-        }
-
         public string ReturnCurrentTopic()
         {
             return _topic;
+        }
+
+        public Task SetupSubscriptionTopic(string subscriptionTopic)
+        {
+            throw new NotImplementedException();
         }
     }
 }

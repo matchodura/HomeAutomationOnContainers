@@ -47,42 +47,32 @@ namespace Logging.API.Services
         private async void DoWork(object state)
         {
             var count = Interlocked.Increment(ref executionCount);
-            string[] sensorNames = new string[2] { "czujnik_1", "czujnik_2" };
-            string[] tasmotaNames = new string[2] { "DHT11", "AM2301" };
+            //to do query from db for stability and maintability
+
+            string deviceType = "dht";
+            string[] tasmotaNames = new string[2] { "AM2301", "AM2301" };
+            string tasmotaName = "AM2301";
+            string[] rooms = new string[2] { "pokoj", "strych" };
+
+            //await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
+
+
+
+            // foreach (var (name, index) in rooms.Select((value, i) => (value, i)))
             
-            foreach (var (name, index) in sensorNames.Select((value, i) => (value, i)))
+            foreach (var name in rooms)
             {
-                string commandTopic = $"cmnd/pokoj/{name}/status";
+                
+                string commandTopic = $"cmnd/{name}/{deviceType}/status";
                 string payload = "10";
-                string subscriptionTopic = $"stat/pokoj/{name}/STATUS10";
+                string subscriptionTopic = $"stat/{name}/{deviceType}/STATUS10";
                 string response = string.Empty;
-                int failCount = 0;
+          
+                await _mqttClientService.PublishMessage(commandTopic, payload);
 
-
-                do
-                {
-                    await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
-                    await _mqttClientService.PublishMessage(commandTopic, payload);
-                    response = _mqttClientService.GetResponse();
-
-                    if (string.IsNullOrEmpty(response)) continue;
-                   
-                    var temp = tasmotaNames[index];
-
-                    if (response.Contains($@"{temp}"))
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        failCount++;
-                    }    
-
-                } while (failCount<=10);
-
-                if (failCount >= 10) continue;
-
-
+                //Wait 5 seconds so the client can update the gotten response
+                Thread.Sleep(5000);
+                response = _mqttClientService.GetResponse();
 
                 if (!string.IsNullOrEmpty(response))
                 {
@@ -100,7 +90,7 @@ namespace Logging.API.Services
 
                     var result = _mapper.Map<DHT>(serializedResponse);
 
-                    result.SensorName = name;
+                    result.SensorName = $"{name}/{deviceType}";
 
                     //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
                     var currentDate = DateTime.UtcNow;
@@ -119,8 +109,6 @@ namespace Logging.API.Services
 
                     }
 
-
-
                     _logger.ForContext("Sensor", result.SensorName)
                         .ForContext("Temperature", result.Temperature)
                         .ForContext("Humidity", result.Humidity)
@@ -131,9 +119,6 @@ namespace Logging.API.Services
                 }
 
             }
-
- 
-
 
         }
 

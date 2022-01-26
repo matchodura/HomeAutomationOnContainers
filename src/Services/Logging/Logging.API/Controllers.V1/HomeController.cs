@@ -135,7 +135,7 @@ namespace Logging.API.Controllers
 
             string subscribeTopic = "stat/pokoj/czujnik_1/STATUS10";
 
-            await _mqttClientService.SetupSubscriptionTopic(subscribeTopic);
+            //await _mqttClientService.SetupSubscriptionTopic(subscribeTopic);
             await _mqttClientService.PublishMessage(topic, payload);    
             var response = _mqttClientService.GetResponse();
 
