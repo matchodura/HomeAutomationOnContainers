@@ -162,7 +162,7 @@ namespace Logging.API.Controllers
 
         [HttpGet]
         [Route("mqtt/values")]
-        public async Task<ActionResult<IEnumerable<Mijia>>> GetAllDHTValues([FromQuery] string sensorName)
+        public async Task<ActionResult<IEnumerable<DHT>>> GetAllDHTValues([FromQuery] string sensorName)
         {
             var dhtValues = await _unitOfWork.DHTRepository.GetAllValuesForDht(sensorName);
 
@@ -172,8 +172,19 @@ namespace Logging.API.Controllers
         }
 
         [HttpGet]
+        [Route("mqtt/values/all")]
+        public async Task<ActionResult<IEnumerable<DHT>>> GetAllSensorValues()
+        {
+            var dhtValues = await _unitOfWork.DHTRepository.GetAllValues();
+
+            if (dhtValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
+
+            return Ok(dhtValues);
+        }
+
+        [HttpGet]
         [Route("mqtt/values/last")]
-        public async Task<ActionResult<IEnumerable<Mijia>>> GetLastDHTValue([FromQuery] string sensorName)
+        public async Task<ActionResult<IEnumerable<DHT>>> GetLastDHTValue([FromQuery] string sensorName)
         {
             var dhtValue = await _unitOfWork.DHTRepository.GetLastValueForDht(sensorName);
 

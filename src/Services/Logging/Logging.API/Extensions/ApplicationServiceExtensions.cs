@@ -28,6 +28,15 @@ namespace Logging.API.Extensions
                 options.ReportApiVersions = true;
             });
 
+            services.AddCors(options => {
+                options.AddPolicy("CorsPolicy", builder => builder
+                 .WithOrigins("http://localhost:4200/")
+                 .SetIsOriginAllowed((host) => true)
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowCredentials());
+            });
+
             services.AddAutoMapper(typeof(AutoMapperLoggingProfile).Assembly);
             services.AddGrpc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
