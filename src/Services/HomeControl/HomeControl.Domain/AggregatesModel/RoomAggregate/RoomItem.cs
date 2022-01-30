@@ -9,22 +9,13 @@ namespace HomeControl.Domain.AggregatesModel.RoomAggregate
 {
     public class RoomItem : Entity
     {
-        private DeviceAddress _deviceAddress;
-        private DeviceType _deviceType;
-
         public int DeviceId { get; private set; }
 
         protected RoomItem() { }
 
-        public RoomItem(DeviceAddress deviceAddress, int deviceId)
+        public RoomItem(int deviceId)
         {
-            _deviceAddress = deviceAddress;
             DeviceId = deviceId;
-        }
-
-        public DeviceAddress GetDeviceAddress()
-        {
-            return _deviceAddress;
         }
     }
 }

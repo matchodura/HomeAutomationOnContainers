@@ -11,11 +11,17 @@ namespace HomeControl.Domain.AggregatesModel.RoomAggregate
     public class Room : Entity, IAggregateRoot
     {
         public string Name { get; private set; }
+        public int RoomID { get; private set; }
 
         private bool _isDraft;
 
         private readonly List<RoomItem> _roomItems;
         public IReadOnlyCollection<RoomItem> RoomItems => _roomItems;
+
+        public RoomType RoomType { get; private set; }
+        private int _roomTypeId;
+
+
 
         public static Room NewDraft()
         {
@@ -30,18 +36,17 @@ namespace HomeControl.Domain.AggregatesModel.RoomAggregate
             _isDraft = false;
         }
 
-        public Room(string name) : this()
+        public Room(string name, int roomType) : this()
         {
             Name = name;
-
+            _roomTypeId = RoomType.
             AddRoomCreatedDomainEvent();
         }
 
 
-        public void AddRoomItems(DeviceAddress deviceAddress, int deviceType)
+        public void AddRoomItems(int deviceId)
         {
-
-            var roomItem = new RoomItem(deviceAddress, deviceType);
+            var roomItem = new RoomItem(deviceId);
 
             _roomItems.Add(roomItem);
         }
