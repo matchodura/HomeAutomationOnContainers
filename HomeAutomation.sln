@@ -47,7 +47,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HomeControl.Infrastructure"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Status", "Status", "{713E02C6-A657-4950-9F26-BA4647B6D39F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status", "src\Services\Status\Status.csproj", "{AD77991D-8E86-40F3-8237-473BD7CCD602}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Status.API", "src\Services\Status\Status.API.csproj", "{AD77991D-8E86-40F3-8237-473BD7CCD602}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
