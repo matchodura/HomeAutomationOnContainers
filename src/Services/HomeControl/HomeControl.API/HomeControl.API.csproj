@@ -28,6 +28,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="MediatR" Version="10.0.1" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
@@ -39,9 +41,12 @@
     <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
     <ProjectReference Include="..\..\..\Common\MQTTClient\MQTTClient.csproj" />
     <ProjectReference Include="..\..\Logging\Logging.API\Logging.API.csproj" />
+    <ProjectReference Include="..\HomeControl.Domain\HomeControl.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\DomainEventHandlers\RoomCreatedEvent\" />
+    <Folder Include="Application\Queries\" />
     <Folder Include="Infrastructure\Exceptions\" />
     <Folder Include="Infrastructure\Middlewares\" />
   </ItemGroup>
