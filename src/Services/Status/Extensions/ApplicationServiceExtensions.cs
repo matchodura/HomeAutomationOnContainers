@@ -42,7 +42,7 @@ namespace Status.Extensions
             //});
 
             services.Configure<DeviceDatabaseSettings>(config.GetSection("DeviceDatabase"));
-            services.AddSingleton<DeviceService>();
+            services.AddSingleton<MongoDataContext>();
 
             services.AddMqttClientHostedService();
 

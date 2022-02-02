@@ -8,11 +8,11 @@ namespace Status.Controllers.V1
 {
     public class StatusController : BaseApiController
     {
-        private readonly DeviceService _deviceService;
+        private readonly MongoDataContext _deviceService;
         private readonly IMapper _mapper;
         private readonly Serilog.ILogger _logger;
 
-        public StatusController(DeviceService deviceService, IMapper mapper, Serilog.ILogger logger)
+        public StatusController(MongoDataContext deviceService, IMapper mapper, Serilog.ILogger logger)
         {
             _deviceService = deviceService;
             _mapper = mapper;

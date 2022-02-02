@@ -4,11 +4,11 @@ using MongoDB.Driver;
 
 namespace Status.API.Services;
 
-public class DeviceService
+public class MongoDataContext
 {
     private readonly IMongoCollection<Device> _deviceCollection;
 
-    public DeviceService(
+    public MongoDataContext(
         IOptions<DeviceDatabaseSettings> deviceDatabaseSettings)
     {
         var mongoClient = new MongoClient(
