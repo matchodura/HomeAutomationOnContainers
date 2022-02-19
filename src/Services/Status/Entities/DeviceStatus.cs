@@ -2,8 +2,7 @@
 {
     public enum DeviceStatus
     {
-        JustAdded,
-        Healthy,
-        Unhealhty
+        Alive,
+        Dead
     }
 }

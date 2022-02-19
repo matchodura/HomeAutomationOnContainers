@@ -46,7 +46,7 @@ namespace Status.Extensions
 
             services.AddMqttClientHostedService();
 
-           // services.AddHostedService<DataPollingService>();
+            services.AddHostedService<DeviceCheckService>();
 
             return services;
         }

@@ -14,7 +14,7 @@ namespace Status.API.Services.MQTT
     {
         private IMqttClient mqttClient;
         private IMqttClientOptions options;
-  
+
         private string _response;
         private string _topic;
 
@@ -38,20 +38,8 @@ namespace Status.API.Services.MQTT
             var payloadText = Encoding.UTF8.GetString(
                 eventArgs?.ApplicationMessage?.Payload ?? Array.Empty<byte>());
 
-            var topic = eventArgs?.ApplicationMessage.Topic ?? string.Empty;
-
-            //TODO make it configurable
-            if (topic == "stat/pokoj/dht/STATUS10")
-            {
-                _response = payloadText;
-            }
-            if (topic == "stat/strych/dht/STATUS10")
-            {
-                _response = payloadText;
-            }
-
-
-
+            _response = payloadText;
+  
             return Task.CompletedTask;
         }
 
@@ -63,13 +51,7 @@ namespace Status.API.Services.MQTT
             await mqttClient.SubscribeAsync(
             new MqttTopicFilter
             {
-                Topic = "stat/pokoj/dht/STATUS10",
-                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
-                
-            },
-            new MqttTopicFilter
-            {
-                Topic = "stat/strych/dht/STATUS10",
+                Topic = "stat/pokoj/dht/RESULT",
                 QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
             });
         }

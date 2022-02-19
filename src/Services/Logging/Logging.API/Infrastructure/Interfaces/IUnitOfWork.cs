@@ -9,13 +9,9 @@ namespace Logging.API.Interfaces
     public interface IUnitOfWork
     {
         IMijiaRepository MijiaRepository { get; }
-
         IDHTRepository DHTRepository { get; }
         IDeviceRepository DeviceRepository { get; }
-
         Task<bool> Complete();
-
         bool HasChanges();
-
     }
 }

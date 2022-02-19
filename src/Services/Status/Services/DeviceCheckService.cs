@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Status.API.Services.MQTT;
+using Status.API.Entities;
 
 namespace Status.API.Services
 {
@@ -17,14 +18,17 @@ namespace Status.API.Services
         private int executionCount = 0;
         private readonly Serilog.ILogger _logger;
         private readonly IMapper _mapper;
+        private readonly MongoDataContext _dbContext;
         private readonly IMqttClientService _mqttClientService;
         private Timer _timer = null!;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        public DeviceCheckService(Serilog.ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
+        public DeviceCheckService(Serilog.ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider,
+            IMapper mapper, MongoDataContext dbContext)
         {
             _logger = logger;
             _mapper = mapper;
+            _dbContext = dbContext;
             _mqttClientService = provider.MqttClientService;
             _scopeFactory = scopeFactory;
         }
@@ -42,81 +46,55 @@ namespace Status.API.Services
         private async void DoWork(object state)
         {
             var count = Interlocked.Increment(ref executionCount);
-            //to do query from db for stability and maintability
 
-            string deviceType = "dht";
-            string[] tasmotaNames = new string[2] { "AM2301", "AM2301" };
-            string tasmotaName = "AM2301";
-            string[] rooms = new string[2] { "pokoj", "strych" };
+            var deviceList = await _dbContext.GetAsync();
 
-            //await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
+            var topics = deviceList.Select(x => x.Topic).ToArray();
 
 
-
-            // foreach (var (name, index) in rooms.Select((value, i) => (value, i)))
-            
-            foreach (var name in rooms)
+            foreach (var topic in topics)
             {
-                
-                string commandTopic = $"cmnd/{name}/{deviceType}/status";
-                string payload = "10";
-                string subscriptionTopic = $"stat/{name}/{deviceType}/STATUS10";
+
+                string command = $"cmnd/{topic}/state";
+                string payload = String.Empty;
                 string response = string.Empty;
-          
-                await _mqttClientService.PublishMessage(commandTopic, payload);
 
-                //Wait 5 seconds so the client can update the gotten response
-                Thread.Sleep(5000);
-                response = _mqttClientService.GetResponse();
+                await _mqttClientService.PublishMessage(command, payload);
 
-                if (!string.IsNullOrEmpty(response))
+                var deviceToBeUpdated = deviceList.Single(x => x.Topic == topic);
+
+                try
                 {
-                    if (response.Contains(@"DHT11"))
+                    //Wait 5 seconds so the client can update the gotten response
+                    Thread.Sleep(5000);
+                    response = _mqttClientService.GetResponse();
+
+                    if (!string.IsNullOrEmpty(response))
                     {
-                        response = response.Replace(@"DHT11", @"Values");
+                        var serializedResponse = JsonSerializer.Deserialize<State>(response);
+                        deviceToBeUpdated.State = serializedResponse;
+
+                        deviceToBeUpdated.LastAlive = DateTime.Now;
+                        deviceToBeUpdated.DeviceStatus = DeviceStatus.Alive;
+                    }
+                    else
+                    {
+                        deviceToBeUpdated.DeviceStatus = DeviceStatus.Dead;
+                        deviceToBeUpdated.State = null;
                     }
 
-                    if (response.Contains(@"AM2301"))
-                    {
-                        response = response.Replace(@"AM2301", @"Values");
-                    }
-
-                    DHTDTO serializedResponse = JsonSerializer.Deserialize<DHTDTO>(response);
-
-                    var result = _mapper.Map<DHT>(serializedResponse);
-
-                    result.SensorName = $"{name}/{deviceType}";
-
-                    //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
-                    var currentDate = DateTime.UtcNow;
-                    result.Time = currentDate;
 
 
-                    using (var scope = _scopeFactory.CreateScope())
-                    {
-                        var context = scope.ServiceProvider.GetService<IUnitOfWork>();
-
-
-                        context.DHTRepository.AddValuesForDHT(result);
-
-                        await context.Complete();
-
-
-                    }
-
-                    _logger.ForContext("Sensor", result.SensorName)
-                        .ForContext("Temperature", result.Temperature)
-                        .ForContext("Humidity", result.Humidity)
-                        .ForContext("DewPoint", result.DewPoint)
-                        .ForContext("Time", result.Time)
-                        .Information(
-                             "Device Check Service is working. Checked sensor {name}", name);
+                    deviceToBeUpdated.LastCheck = DateTime.Now;
+                    await _dbContext.UpdateAsync(deviceToBeUpdated.Id, deviceToBeUpdated);
                 }
-
+                catch (Exception ex)
+                {
+                    _logger.Error($"Error occured for topic: {topic}: {ex.Message}");
+                }
             }
-
         }
-
+                
         public Task StopAsync(CancellationToken stoppingToken)
         {
             _logger.Information("Timed Hosted Service is stopping.");

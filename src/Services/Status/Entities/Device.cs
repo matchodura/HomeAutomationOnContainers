@@ -14,18 +14,20 @@ namespace Status.API.Entities
         [JsonConverter(typeof(StringEnumConverter))]  
         [BsonRepresentation(BsonType.String)]
         public DeviceType DeviceType { get; set; }
-        public string Topic { get; set; } = null!;
+        public string Topic { get; set; } = null!;  
         public string IP { get; set; } = null!;
         public string MosquittoUsername { get; set; } = null!;
         public string MosquittoPassword { get; set; } = null!;
-
         public DateTime DateAdded { get; set; }
         public DateTime DateModified { get; set; }
         public DateTime LastCheck{ get; set; }
+        public DateTime LastAlive { get; set; }
+        public State State { get; set; } = null!;
 
         [JsonConverter(typeof(StringEnumConverter))]
         [BsonRepresentation(BsonType.String)]
-        public DeviceStatus DeviceStatus { get; set; }  
+        public DeviceStatus DeviceStatus { get; set; }
+
     }
 
 

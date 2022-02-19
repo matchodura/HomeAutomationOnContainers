@@ -41,7 +41,6 @@
     <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
     <ProjectReference Include="..\..\..\Common\MQTTClient\MQTTClient.csproj" />
     <ProjectReference Include="..\..\Logging\Logging.API\Logging.API.csproj" />
-    <ProjectReference Include="..\HomeControl.Domain\HomeControl.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
