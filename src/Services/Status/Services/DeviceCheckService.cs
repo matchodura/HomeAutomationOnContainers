@@ -35,7 +35,7 @@ namespace Status.API.Services
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Data Polling Service running.");
+            _logger.Information("Device Status Service running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
                 TimeSpan.FromSeconds(30));
@@ -59,7 +59,17 @@ namespace Status.API.Services
                 string payload = String.Empty;
                 string response = string.Empty;
 
-                await _mqttClientService.PublishMessage(command, payload);
+
+                try
+                {
+                    await _mqttClientService.PublishMessage(command, payload);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.ForContext("Topic", topic)
+                        .Error($"Error occured for topic: {topic}: {ex.Message}");
+                }
 
                 var deviceToBeUpdated = deviceList.Single(x => x.Topic == topic);
 
@@ -68,10 +78,11 @@ namespace Status.API.Services
                     //Wait 5 seconds so the client can update the gotten response
                     Thread.Sleep(5000);
                     response = _mqttClientService.GetResponse();
+                    var serializedResponse = JsonSerializer.Deserialize<State>(response);
 
                     if (!string.IsNullOrEmpty(response))
                     {
-                        var serializedResponse = JsonSerializer.Deserialize<State>(response);
+
                         deviceToBeUpdated.State = serializedResponse;
 
                         deviceToBeUpdated.LastAlive = DateTime.Now;
@@ -87,10 +98,21 @@ namespace Status.API.Services
 
                     deviceToBeUpdated.LastCheck = DateTime.Now;
                     await _dbContext.UpdateAsync(deviceToBeUpdated.Id, deviceToBeUpdated);
+
+                    _logger.ForContext("Name", deviceToBeUpdated.Name)
+                            .ForContext("IP", deviceToBeUpdated.IP)
+                            .ForContext("LastCheck", deviceToBeUpdated.LastCheck)
+                            .ForContext("Status", deviceToBeUpdated.DeviceStatus)
+                            .Information(
+                                 "Device Status Service is working. Checked topic {topic}", topic);
                 }
                 catch (Exception ex)
                 {
-                    _logger.Error($"Error occured for topic: {topic}: {ex.Message}");
+                    _logger.ForContext("Name", deviceToBeUpdated.Name)
+                        .ForContext("Topic", deviceToBeUpdated.Topic)
+                        .ForContext("IP", deviceToBeUpdated.IP)
+                        .ForContext("LastCheck", deviceToBeUpdated.LastAlive)
+                        .Error($"Error occured for topic: {topic}: {ex.Message}");
                 }
             }
         }
