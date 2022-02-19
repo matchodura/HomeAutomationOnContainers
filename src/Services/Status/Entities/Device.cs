@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Entities.Enums;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json.Converters;
 using System.Text.Json.Serialization;

@@ -1,4 +1,5 @@
 ﻿using Entities.Configuration;
+using Logging.API.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,8 +7,8 @@ namespace Logging.API.Infrastructure.Interfaces
 {
     public interface IDeviceRepository
     {
-        void AddDevice(Device device);
-        Task<List<Device>> GetAllConfiguredDevices();
-        //TODO maybe check if device is online?
+        void AddDevice(AvailableDevice device);
+        void DeleteDevice(AvailableDevice device);
+        Task<List<AvailableDevice>> GetAllDevices();
     }
 }

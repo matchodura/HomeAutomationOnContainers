@@ -2,6 +2,7 @@
 using Entities.BLE;
 using Entities.Configuration;
 using Entities.DHT;
+using Logging.API.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,13 +19,8 @@ namespace Logging.API.Data
         }
 
         public DbSet<Mijia> Mijias { get; set; }
-       // public DbSet<BLEDevice> BLEDevices { get; set; }
         public DbSet<DHT> DHTs { get; set; } 
-        public DbSet<Device> Devices { get; set; } 
+        public DbSet<AvailableDevice> Devices { get; set; } 
 
-        //protected override void OnModelCreating(ModelBuilder builder)
-        //{
-
-        //}
     }
 }

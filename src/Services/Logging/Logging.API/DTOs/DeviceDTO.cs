@@ -16,7 +16,7 @@ namespace Logging.API.DTOs
         public string TasmotaDevice { get; set; }
 
         [JsonPropertyName("function")]
-        public DeviceFunction Function { get; set; }
+        public DeviceType Function { get; set; }
 
         [JsonPropertyName("ip")]
         public string IPAddress { get; set; }

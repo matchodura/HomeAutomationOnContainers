@@ -13,7 +13,7 @@ namespace Entities.Configuration
         public string Room { get; set; }
         public string FriendlyName { get; set; }
         public string TasmotaDevice { get; set; }
-        public DeviceFunction Function { get; set; }
+        public DeviceType Function { get; set; }
         public string IPAddress { get; set; }
         public string MosquittoUsername { get; set; }
         public string MosquittoPassword { get; set; }

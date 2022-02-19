@@ -1,8 +1,9 @@
-﻿namespace Status.API.Entities
+﻿namespace Entities.Enums
 {
     public enum DeviceStatus
     {
         Alive,
-        Dead
+        Dead,
+        JustAdded
     }
 }

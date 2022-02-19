@@ -1,5 +1,6 @@
 ﻿using Entities.Configuration;
 using Logging.API.Data;
+using Logging.API.Entities;
 using Logging.API.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -17,12 +18,17 @@ namespace Logging.API.Infrastructure.Data
             _context = context;
         }
 
-        public void AddDevice(Device device)
+        public void AddDevice(AvailableDevice device)
         {
             _context.Devices.Add(device);
         }
 
-        public async Task<List<Device>> GetAllConfiguredDevices()
+        public void DeleteDevice(AvailableDevice device)
+        {
+            _context.Devices.Remove(device);
+        }
+
+        public async Task<List<AvailableDevice>> GetAllDevices()
         {
            return await _context.Devices.OrderByDescending(d => d.Id).ToListAsync();
         }

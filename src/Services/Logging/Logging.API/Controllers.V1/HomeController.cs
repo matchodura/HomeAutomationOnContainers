@@ -197,7 +197,7 @@ namespace Logging.API.Controllers
         [Route("devices")]
         public async Task<ActionResult<IEnumerable<Device>>> GetAllDevices()
         {
-            var devices = await _unitOfWork.DeviceRepository.GetAllConfiguredDevices();
+            var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
 
             if (devices.Count() == 0) return NotFound("No devices are currently configured!");
 
@@ -211,7 +211,7 @@ namespace Logging.API.Controllers
             var newDevice = _mapper.Map<Device>(device);
 
 
-            var devices = await _unitOfWork.DeviceRepository.GetAllConfiguredDevices();
+            var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
 
             //TODO fix this
             if (devices.Contains(newDevice)) return Conflict("Device already exists in database!");

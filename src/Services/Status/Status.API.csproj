@@ -95,6 +95,10 @@
     <Content Remove="C:\Users\Mateusz\.nuget\packages\mongodb.driver.core\2.14.1\build\..\runtimes\osx\native\libzstd.dylib" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Entities\Entities.csproj" />
+  </ItemGroup>
+
 
 
 </Project>

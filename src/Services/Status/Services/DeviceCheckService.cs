@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Status.API.Services.MQTT;
+using Entities.Enums;
 using Status.API.Entities;
 
 namespace Status.API.Services
@@ -21,16 +22,14 @@ namespace Status.API.Services
         private readonly MongoDataContext _dbContext;
         private readonly IMqttClientService _mqttClientService;
         private Timer _timer = null!;
-        private readonly IServiceScopeFactory _scopeFactory;
 
-        public DeviceCheckService(Serilog.ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider,
+        public DeviceCheckService(Serilog.ILogger logger, MqttClientServiceProvider provider,
             IMapper mapper, MongoDataContext dbContext)
         {
             _logger = logger;
             _mapper = mapper;
             _dbContext = dbContext;
             _mqttClientService = provider.MqttClientService;
-            _scopeFactory = scopeFactory;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
@@ -58,7 +57,6 @@ namespace Status.API.Services
                 string command = $"cmnd/{topic}/state";
                 string payload = String.Empty;
                 string response = string.Empty;
-
 
                 try
                 {
@@ -105,6 +103,16 @@ namespace Status.API.Services
                             .ForContext("Status", deviceToBeUpdated.DeviceStatus)
                             .Information(
                                  "Device Status Service is working. Checked topic {topic}", topic);
+
+
+                    if(deviceToBeUpdated.DeviceType == DeviceType.Sensor)
+                    {
+                        //send to queue that the device has been updated and is alive
+                        //data logging api should get that value and update it's own database
+                        //after that it nows that this sensor can be polled so the sensor is alive
+                        //a bit complicated, but what would you do to learn some microservices?
+                    }
+
                 }
                 catch (Exception ex)
                 {
@@ -119,7 +127,7 @@ namespace Status.API.Services
                 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Timed Hosted Service is stopping.");
+            _logger.Information("Device Status Service is stopping.");
 
             _timer?.Change(Timeout.Infinite, 0);
 
