@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Status.API.Services.MQTT;
 using Entities.Enums;
 using Status.API.Entities;
+using Status.API.Services.RabbitMQ;
+using Status.API.DTOs;
 
 namespace Status.API.Services
 {
@@ -20,15 +22,17 @@ namespace Status.API.Services
         private readonly Serilog.ILogger _logger;
         private readonly IMapper _mapper;
         private readonly MongoDataContext _dbContext;
+        private readonly IMessageBusClient _messageBusClient;
         private readonly IMqttClientService _mqttClientService;
         private Timer _timer = null!;
 
         public DeviceCheckService(Serilog.ILogger logger, MqttClientServiceProvider provider,
-            IMapper mapper, MongoDataContext dbContext)
+            IMapper mapper, MongoDataContext dbContext, IMessageBusClient messageBusClient)
         {
             _logger = logger;
             _mapper = mapper;
             _dbContext = dbContext;
+            _messageBusClient = messageBusClient;
             _mqttClientService = provider.MqttClientService;
         }
 
@@ -111,6 +115,24 @@ namespace Status.API.Services
                         //data logging api should get that value and update it's own database
                         //after that it nows that this sensor can be polled so the sensor is alive
                         //a bit complicated, but what would you do to learn some microservices?
+
+                        try
+                        {
+                            var availableDevice = _mapper.Map<AvailableDeviceDTO>(deviceToBeUpdated);
+
+                            _messageBusClient.UpdateAvailableDevice(availableDevice);
+
+                            _logger.ForContext("Name", deviceToBeUpdated.Name)
+                                    .ForContext("Status", deviceToBeUpdated.DeviceStatus)
+                                    .Information(
+                                         "Device Status Service is working. Updating message bus topic {topic}", topic);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
+
+                        }
+
                     }
 
                 }

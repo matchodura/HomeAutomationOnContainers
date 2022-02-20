@@ -8,6 +8,7 @@ using Status.API.MQTT;
 using Status.API.Options;
 using Status.API.Services;
 using Status.API.Services.MQTT;
+using Status.API.Services.RabbitMQ;
 
 namespace Status.Extensions
 {
@@ -47,6 +48,7 @@ namespace Status.Extensions
             services.AddMqttClientHostedService();
 
             services.AddHostedService<DeviceCheckService>();
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             return services;
         }

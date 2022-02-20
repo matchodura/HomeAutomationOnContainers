@@ -204,27 +204,27 @@ namespace Logging.API.Controllers
             return Ok(devices);
         }
 
-        [HttpPost]
-        [Route("devices")]
-        public async Task<ActionResult<IEnumerable<Mijia>>> AddNewDevice([FromBody] DeviceDTO device)
-        {
-            var newDevice = _mapper.Map<Device>(device);
+        //[HttpPost]
+        //[Route("devices")]
+        //public async Task<ActionResult<IEnumerable<Mijia>>> AddNewDevice([FromBody] DeviceDTO device)
+        //{
+        //    var newDevice = _mapper.Map<Device>(device);
 
 
-            var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
+        //    var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
 
-            //TODO fix this
-            if (devices.Contains(newDevice)) return Conflict("Device already exists in database!");
+        //    //TODO fix this
+        //    if (devices.Contains(newDevice)) return Conflict("Device already exists in database!");
 
-            //postgresql bug
-            var currentDate = DateTime.UtcNow;
-            newDevice.DateModified = currentDate;
+        //    //postgresql bug
+        //    var currentDate = DateTime.UtcNow;
+        //    newDevice.DateModified = currentDate;
 
-            _unitOfWork.DeviceRepository.AddDevice(newDevice);
-            await _unitOfWork.Complete();
+        //    _unitOfWork.DeviceRepository.AddDevice(newDevice);
+        //    await _unitOfWork.Complete();
 
-            //TODO maybe a redirection of some sort on completion?
-            return Ok(device);
-        }
+        //    //TODO maybe a redirection of some sort on completion?
+        //    return Ok(device);
+        //}
     }
 }

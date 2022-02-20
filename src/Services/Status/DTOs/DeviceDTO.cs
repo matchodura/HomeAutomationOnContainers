@@ -1,10 +1,10 @@
-﻿using Status.API.Entities;
+﻿using Entities.Enums;
+using Status.API.Entities;
 
 namespace Status.API.DTOs
 {
     public class DeviceDTO
     {
- 
         public string? Id { get; set; }
         public string Name { get; set; } = null!;
         public DeviceType DeviceType { get; set; }

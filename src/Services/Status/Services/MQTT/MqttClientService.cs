@@ -53,6 +53,11 @@ namespace Status.API.Services.MQTT
             {
                 Topic = "stat/pokoj/dht/RESULT",
                 QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+            },
+            new MqttTopicFilter
+            {
+                Topic = "stat/pokoj/gniazdko/RESULT",
+                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
             });
         }
          

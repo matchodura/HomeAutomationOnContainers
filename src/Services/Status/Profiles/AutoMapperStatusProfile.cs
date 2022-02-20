@@ -9,7 +9,7 @@ namespace Logging.API.Profiles
         public AutoMapperStatusProfile()
         {
             CreateMap<DeviceDTO, Device>();
-        
+            CreateMap<Device, AvailableDeviceDTO>();
         }
     }
 }
