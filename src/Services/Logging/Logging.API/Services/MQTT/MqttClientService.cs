@@ -5,6 +5,7 @@ using MQTTnet.Client.Connecting;
 using MQTTnet.Client.Disconnecting;
 using MQTTnet.Client.Options;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,42 +42,17 @@ namespace Logging.API.Services.MQTT
 
             var topic = eventArgs?.ApplicationMessage.Topic ?? string.Empty;
 
-            //TODO make it configurable
-            if (topic == "stat/pokoj/dht/STATUS10")
-            {
-                _response = payloadText;
-            }
-            if (topic == "stat/strych/dht/STATUS10")
-            {
-                _response = payloadText;
-            }
-
-
+            _response = payloadText;
 
             return Task.CompletedTask;
         }
 
         public async Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
         {
-            System.Console.WriteLine("connected");
+            System.Console.WriteLine("connected");                       
 
-            //TODO make it configurable
-            await mqttClient.SubscribeAsync(
-            new MqttTopicFilter
-            {
-                Topic = "stat/pokoj/dht/STATUS10",
-                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
-                
-            },
-            new MqttTopicFilter
-            {
-                Topic = "stat/strych/dht/STATUS10",
-                QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
-            });
         }
          
-
-
         public Task HandleDisconnectedAsync(MqttClientDisconnectedEventArgs eventArgs)
         {
             throw new System.NotImplementedException();
@@ -125,9 +101,26 @@ namespace Logging.API.Services.MQTT
             return _topic;
         }
 
-        public Task SetupSubscriptionTopic(string subscriptionTopic)
+        public async Task SetupSubscriptionTopics(string[] subscriptionTopics)
         {
-            throw new NotImplementedException();
+            var topicFilters = new List<MqttTopicFilter>();
+
+            foreach(var topic in subscriptionTopics)
+            {                
+                var topicFilter = new MqttTopicFilter
+                {
+                    Topic = "stat/" + topic + "/STATUS10",
+                    QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+                };
+
+                topicFilters.Add(topicFilter);
+
+            }
+
+            var test = topicFilters.ToArray();
+
+            await mqttClient.SubscribeAsync(test);
+
         }
     }
 }

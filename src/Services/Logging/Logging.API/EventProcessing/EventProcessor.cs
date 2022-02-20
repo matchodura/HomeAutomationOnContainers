@@ -62,44 +62,54 @@ namespace Logging.API.EventProcessing
 
         private void AddDevice(string statusCheckPublishedMessage)
         {
-            using (var scope = _scopeFactory.CreateScope())
+            try
             {
-                var repo = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-
-                var availableDevice = JsonSerializer.Deserialize<AvailableDevice>(statusCheckPublishedMessage);
-                var currentDate = DateTime.UtcNow;
-                availableDevice.LastUpdated = currentDate;
-
-                try
+                using (var scope = _scopeFactory.CreateScope())
                 {
+                    var repo = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                    if (!repo.DeviceRepository.TopicAlreadyExists(availableDevice.Topic))
+                    var availableDevice = JsonSerializer.Deserialize<AvailableDevice>(statusCheckPublishedMessage);
+                    var currentDate = DateTime.UtcNow;
+                    availableDevice.LastUpdated = currentDate;
+
+                    try
                     {
-                        repo.DeviceRepository.AddDevice(availableDevice);
-                        repo.Complete();
 
-                        _logger.ForContext("Status", availableDevice.Status)
+                        if (!repo.DeviceRepository.TopicAlreadyExists(availableDevice.Topic))
+                        {
+                            repo.DeviceRepository.AddDevice(availableDevice);
+                            repo.Complete();
+
+                            _logger.ForContext("Status", availableDevice.Status)
+                                    .ForContext("LastUpdated", availableDevice.LastUpdated)
+                                    .Information(
+                                         "Data Polling Event Processor is working. Added sensor at {topic}", availableDevice.Topic);
+                        }
+                        else
+                        {
+                            repo.DeviceRepository.UpdateDevice(availableDevice);
+                            repo.Complete();
+
+                            _logger.ForContext("Status", availableDevice.Status)
                                 .ForContext("LastUpdated", availableDevice.LastUpdated)
                                 .Information(
-                                     "Data Polling Event Processor is working. Added sensor at {topic}", availableDevice.Topic);
+                                     "Data Polling Event Processor is working. Updated sensor at {topic}", availableDevice.Topic);
+
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        repo.DeviceRepository.UpdateDevice(availableDevice);
-
-                        _logger.ForContext("Status", availableDevice.Status)
-                            .ForContext("LastUpdated", availableDevice.LastUpdated)
-                            .Information(
-                                 "Data Polling Event Processor is working. Updated sensor at {topic}", availableDevice.Topic);
-
+                        Console.WriteLine($"--> Could not add Device to DB: {ex.Message}");
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"--> Could not add Device to DB: {ex.Message}");
-                }
 
+                }
             }
+            catch (Exception ex)
+            {
+                Console.Write(ex.Message);
+            }
+
+           
         }
 
         private void RemoveDevice(string statusCheckPublishedMessage)

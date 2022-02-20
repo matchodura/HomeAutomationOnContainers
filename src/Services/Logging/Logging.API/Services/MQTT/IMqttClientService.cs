@@ -13,7 +13,7 @@ namespace Logging.API.Services.MQTT
     {
 
         Task PublishMessage(string commandTopic, string payload);
-        //Task SetupSubscriptionTopic(string subscriptionTopic);
+        Task SetupSubscriptionTopics(string[] subscriptionTopics);
         string GetResponse();
         string ReturnCurrentTopic();
     }

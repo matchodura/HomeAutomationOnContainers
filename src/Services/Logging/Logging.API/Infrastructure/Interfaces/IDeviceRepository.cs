@@ -12,5 +12,6 @@ namespace Logging.API.Infrastructure.Interfaces
         Task<List<AvailableDevice>> GetAllDevices();
         bool TopicAlreadyExists(string topic);
         void UpdateDevice(AvailableDevice device);
+        Task<List<string>> GetAllAvailableTopics();
     }
 }

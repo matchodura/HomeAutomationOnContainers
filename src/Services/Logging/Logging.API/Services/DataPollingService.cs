@@ -39,7 +39,7 @@ namespace Logging.API.Services
             _logger.Information("Data Polling Service running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
-                TimeSpan.FromSeconds(30));
+                TimeSpan.FromSeconds(45));
 
             return Task.CompletedTask;
         }
@@ -47,25 +47,34 @@ namespace Logging.API.Services
         private async void DoWork(object state)
         {
             var count = Interlocked.Increment(ref executionCount);
-            //to do query from db for stability and maintability
 
-            string deviceType = "dht";
-            string[] tasmotaNames = new string[2] { "AM2301", "AM2301" };
-            string tasmotaName = "AM2301";
-            string[] rooms = new string[2] { "pokoj", "strych" };
+            List<string> topics = new List<string>();
 
-            //await _mqttClientService.SetupSubscriptionTopic(subscriptionTopic);
+            try
+            {
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetService<IUnitOfWork>();
+                    topics = await context.DeviceRepository.GetAllAvailableTopics();
+
+
+                    await _mqttClientService.SetupSubscriptionTopics(topics.ToArray());
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Error($"Something wrong {ex.Message}");
+            }
 
 
 
-            // foreach (var (name, index) in rooms.Select((value, i) => (value, i)))
-            
-            foreach (var name in rooms)
+            foreach (var topic in topics)
             {
                 
-                string commandTopic = $"cmnd/{name}/{deviceType}/status";
+                string commandTopic = $"cmnd/{topic}/status";
                 string payload = "10";
-                string subscriptionTopic = $"stat/{name}/{deviceType}/STATUS10";
                 string response = string.Empty;
           
                 await _mqttClientService.PublishMessage(commandTopic, payload);
@@ -90,7 +99,7 @@ namespace Logging.API.Services
 
                     var result = _mapper.Map<DHT>(serializedResponse);
 
-                    result.SensorName = $"{name}/{deviceType}";
+                    result.SensorName = topic;
 
                     //link to issue-> https://github.com/npgsql/efcore.pg/issues/2000
                     var currentDate = DateTime.UtcNow;
@@ -100,12 +109,8 @@ namespace Logging.API.Services
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var context = scope.ServiceProvider.GetService<IUnitOfWork>();
-
-
                         context.DHTRepository.AddValuesForDHT(result);
-
                         await context.Complete();
-
 
                     }
 
@@ -115,7 +120,7 @@ namespace Logging.API.Services
                         .ForContext("DewPoint", result.DewPoint)
                         .ForContext("Time", result.Time)
                         .Information(
-                             "Data Polling Service is working. Polled sensor {name}", name);
+                             "Data Polling Service is working. Polled sensor {topic}", topic);
                 }
 
             }
