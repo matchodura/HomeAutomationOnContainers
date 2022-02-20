@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logging.API.Migrations
 {
     [DbContext(typeof(RpiDataContext))]
-    [Migration("20220123230947_Initial")]
-    partial class Initial
+    [Migration("20220220161424_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,43 +23,6 @@ namespace Logging.API.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Entities.Configuration.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("DateModified")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("FriendlyName")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Function")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("IPAddress")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MosquittoPassword")
-                        .HasColumnType("text");
-
-                    b.Property<string>("MosquittoUsername")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Room")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TasmotaDevice")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Devices");
-                });
 
             modelBuilder.Entity("Entities.DHT.DHT", b =>
                 {
@@ -121,6 +84,28 @@ namespace Logging.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Mijias");
+                });
+
+            modelBuilder.Entity("Logging.API.Entities.AvailableDevice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Topic")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Devices");
                 });
 #pragma warning restore 612, 618
         }

@@ -14,6 +14,8 @@ using Logging.API.Services;
 using Logging.API.Profiles;
 using AutoMapper;
 using MQTTnet.Client.Options;
+using Logging.API.Services.RabbitMQ;
+using Logging.API.EventProcessing;
 
 namespace Logging.API.Extensions
 {
@@ -48,8 +50,10 @@ namespace Logging.API.Extensions
             });
 
             services.AddMqttClientHostedService();
-
             services.AddHostedService<DataPollingService>();
+            services.AddHostedService<MessageBusSubscriber>();
+
+            services.AddSingleton<IEventProcessor, EventProcessor>();
 
             return services;
         }

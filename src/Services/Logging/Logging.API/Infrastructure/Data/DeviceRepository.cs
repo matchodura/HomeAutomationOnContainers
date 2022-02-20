@@ -32,5 +32,15 @@ namespace Logging.API.Infrastructure.Data
         {
            return await _context.Devices.OrderByDescending(d => d.Id).ToListAsync();
         }
+
+        public bool TopicAlreadyExists(string topic)
+        {
+            return _context.Devices.Any(x => x.Topic == topic);
+        }
+
+        public void UpdateDevice(AvailableDevice device)
+        {
+            _context.Devices.Update(device);
+        }
     }
 }

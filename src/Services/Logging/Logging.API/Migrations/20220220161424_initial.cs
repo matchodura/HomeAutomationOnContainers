@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Logging.API.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -16,14 +16,9 @@ namespace Logging.API.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Room = table.Column<string>(type: "text", nullable: true),
-                    FriendlyName = table.Column<string>(type: "text", nullable: true),
-                    TasmotaDevice = table.Column<string>(type: "text", nullable: true),
-                    Function = table.Column<int>(type: "integer", nullable: false),
-                    IPAddress = table.Column<string>(type: "text", nullable: true),
-                    MosquittoUsername = table.Column<string>(type: "text", nullable: true),
-                    MosquittoPassword = table.Column<string>(type: "text", nullable: true),
-                    DateModified = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    Topic = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

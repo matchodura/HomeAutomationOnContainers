@@ -120,6 +120,18 @@ namespace Status.API.Services
                         {
                             var availableDevice = _mapper.Map<AvailableDeviceDTO>(deviceToBeUpdated);
 
+                            if(deviceToBeUpdated.DeviceStatus == DeviceStatus.Alive)
+                            {
+                                availableDevice.Event = "Device_Alive";
+                                availableDevice.Status = DeviceStatus.Alive;
+                            }
+                            else
+                            {
+                                availableDevice.Event = "Device_Dead";
+                                availableDevice.Status = DeviceStatus.Dead;
+                            }
+
+                            availableDevice.LastUpdated = DateTime.Now;
                             _messageBusClient.UpdateAvailableDevice(availableDevice);
 
                             _logger.ForContext("Name", deviceToBeUpdated.Name)
@@ -130,7 +142,6 @@ namespace Status.API.Services
                         catch (Exception ex)
                         {
                             Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
-
                         }
 
                     }
@@ -143,6 +154,7 @@ namespace Status.API.Services
                         .ForContext("IP", deviceToBeUpdated.IP)
                         .ForContext("LastCheck", deviceToBeUpdated.LastAlive)
                         .Error($"Error occured for topic: {topic}: {ex.Message}");
+
                 }
             }
         }

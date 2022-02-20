@@ -10,5 +10,7 @@ namespace Logging.API.Infrastructure.Interfaces
         void AddDevice(AvailableDevice device);
         void DeleteDevice(AvailableDevice device);
         Task<List<AvailableDevice>> GetAllDevices();
+        bool TopicAlreadyExists(string topic);
+        void UpdateDevice(AvailableDevice device);
     }
 }
