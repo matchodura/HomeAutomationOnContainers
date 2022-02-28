@@ -46,8 +46,7 @@
   <ItemGroup>
     <Folder Include="Application\DomainEventHandlers\RoomCreatedEvent\" />
     <Folder Include="Application\Queries\" />
-    <Folder Include="Infrastructure\Exceptions\" />
-    <Folder Include="Infrastructure\Middlewares\" />
+    <Folder Include="DTOs\" />
   </ItemGroup>
 
   <ItemGroup>

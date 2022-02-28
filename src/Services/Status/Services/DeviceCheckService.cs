@@ -59,7 +59,7 @@ namespace Status.API.Services
             {
 
                 string command = $"cmnd/{topic}/state";
-                string payload = String.Empty;
+                string payload = string.Empty;
                 string response = string.Empty;
 
                 try
@@ -84,9 +84,7 @@ namespace Status.API.Services
 
                     if (!string.IsNullOrEmpty(response))
                     {
-
                         deviceToBeUpdated.State = serializedResponse;
-
                         deviceToBeUpdated.LastAlive = DateTime.Now;
                         deviceToBeUpdated.DeviceStatus = DeviceStatus.Alive;
                     }

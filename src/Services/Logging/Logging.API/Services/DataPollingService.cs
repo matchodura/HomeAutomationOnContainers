@@ -68,8 +68,6 @@ namespace Logging.API.Services
                 _logger.Error($"Something wrong {ex.Message}");
             }
 
-
-
             foreach (var topic in topics)
             {
                 
