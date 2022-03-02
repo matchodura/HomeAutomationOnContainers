@@ -1,7 +1,9 @@
-﻿using HomeControl.API.Profiles;
+﻿using HomeControl.API.Infrastructure.Data;
+using HomeControl.API.Profiles;
 using HomeControl.API.SyncDataServices.Grpc;
 using Logging.API.Profiles;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -30,6 +32,11 @@ namespace HomeControl.API.Extensions
             //    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
             //});
 
+            services.AddDbContext<DataContext>(options =>
+            {
+                string connStr = config.GetConnectionString("DefaultConnection");
+                options.UseNpgsql(connStr);
+            });
 
             services.AddAutoMapper(typeof(AutoMapperHomeControlProfile).Assembly);
             services.AddHttpClient();

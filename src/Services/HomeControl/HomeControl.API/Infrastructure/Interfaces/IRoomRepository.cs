@@ -7,7 +7,7 @@ namespace HomeControl.API.Infrastructure.Interfaces
     public interface IRoomRepository
     {
         void AddRoom(Room room);
-        void DeleteRoom(Room room);
+        void DeleteRoom(string roomName);
         void UpdateRoom(Room room);
         Task<List<Room>> GetAllRooms();
         Task<Room> GetRoom(string roomName);

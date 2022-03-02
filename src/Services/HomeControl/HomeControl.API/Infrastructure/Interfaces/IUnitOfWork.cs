@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Logging.API.Interfaces
+namespace HomeControl.API.Interfaces
 {
     public interface IUnitOfWork
     {

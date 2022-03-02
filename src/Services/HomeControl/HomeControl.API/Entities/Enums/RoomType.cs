@@ -11,9 +11,7 @@ namespace HomeControl.API.Entities.Enums
         Bedroom,
         Kitchen,
         LivingRoom,
-        Toilet,
-        Attic,
-        Basement,
-        Outdoor
+        Bathroom,
+        UtilityRoom
     }
 }

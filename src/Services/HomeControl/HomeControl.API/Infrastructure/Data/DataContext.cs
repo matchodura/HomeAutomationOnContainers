@@ -12,7 +12,5 @@ namespace HomeControl.API.Infrastructure.Data
         public DbSet<Room> Rooms { get; set; }
         public DbSet<RoomItem> Items { get; set; }
         public DbSet<RoomValue> Values { get; set; }
-
-
     }
 }
