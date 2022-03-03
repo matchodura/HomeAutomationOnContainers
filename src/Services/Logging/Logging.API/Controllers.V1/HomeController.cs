@@ -26,13 +26,22 @@ namespace Logging.API.Controllers
         private readonly IMqttClientService _mqttClientService;
 
 
-        public HomeController(ILogger logger, IUnitOfWork unitOfWork, MqttClientServiceProvider provider, IMapper mapper)
+        //public HomeController(ILogger logger, IUnitOfWork unitOfWork, MqttClientServiceProvider provider, IMapper mapper)
+        //{
+        //    _logger = logger;
+        //    _unitOfWork = unitOfWork;
+        //    _mapper = mapper;
+        //    _mqttClientService = provider.MqttClientService;
+        //}
+
+        public HomeController(ILogger logger, IUnitOfWork unitOfWork,  IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _mqttClientService = provider.MqttClientService;
+    
         }
+
 
         [HttpGet]
         public IActionResult Index()

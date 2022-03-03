@@ -44,18 +44,18 @@ namespace HomeControl.API.Controllers
             return Ok(resultToDisplay);
         }
 
-        [Route("rooms/all")]
-        [HttpGet]
-        public async Task<ActionResult<List<RoomDTO>>> GetAllRooms()
-        {
-            var rooms = await _unitOfWork.RoomRepository.GetAllRooms();
+        //[Route("rooms/all")]
+        //[HttpGet]
+        //public async Task<ActionResult<List<RoomDTO>>> GetAllRooms()
+        //{
+        //    var rooms = await _unitOfWork.RoomRepository.GetAllRooms();
 
-            if (rooms.Count == 0) return NotFound("There are no configured rooms!");
+        //    if (rooms.Count == 0) return NotFound("There are no configured rooms!");
 
-            var resultsToDisplay = _mapper.Map<RoomDTO>(rooms);
+        //    var resultsToDisplay = _mapper.Map<RoomDTO>(rooms);
 
-            return Ok(resultsToDisplay);
-        }
+        //    return Ok(resultsToDisplay);
+        //}
 
         [Route("rooms")]
         [HttpPost]
