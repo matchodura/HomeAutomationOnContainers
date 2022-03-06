@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Status.API.MQTT;
 using Status.Extensions;
 using Status.API.Entities;
+using Status.API.Services.Grpc;
 
 namespace Status.API
 {
@@ -97,12 +98,12 @@ namespace Status.API
             {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
-               // endpoints.MapGrpcService<GrpcLoggingService>();
+                endpoints.MapGrpcService<GrpcStatusService>();
 
-                //endpoints.MapGet("/protos/sensors.proto", async context =>
-                //{
-                //    await context.Response.WriteAsync(File.ReadAllText("Protos/sensors.proto"));
-                //});
+                endpoints.MapGet("/protos/sensors.proto", async context =>
+                {
+                    await context.Response.WriteAsync(File.ReadAllText("Protos/item_status.proto"));
+                });
             });
 
 

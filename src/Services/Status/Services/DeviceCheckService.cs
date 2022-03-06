@@ -130,7 +130,7 @@ namespace Status.API.Services
                             }
 
                             availableDevice.LastUpdated = DateTime.Now;
-                            _messageBusClient.UpdateAvailableDevice(availableDevice);
+                            //_messageBusClient.UpdateAvailableDevice(availableDevice);
 
                             _logger.ForContext("Name", deviceToBeUpdated.Name)
                                     .ForContext("Status", deviceToBeUpdated.DeviceStatus)

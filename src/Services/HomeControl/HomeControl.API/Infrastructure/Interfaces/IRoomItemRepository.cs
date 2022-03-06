@@ -7,10 +7,10 @@ namespace HomeControl.API.Infrastructure.Interfaces
     public interface IRoomItemRepository
     {
         void AddItem(RoomItem item);
-        void DeleteItem(RoomItem item);
-        void UpdateItem(RoomItem item);
+        void DeleteItem(string itemName);
+        void UpdateItem(string itemName);
         Task<List<RoomItem>> GetAllItems();
-        Task<RoomItem> GetItem(string roomName);
-        bool ItemAlreadyExists(string roomName);
+        Task<RoomItem> GetItem(string itemName);
+        bool ItemAlreadyExists(int deviceId);
     }
 }

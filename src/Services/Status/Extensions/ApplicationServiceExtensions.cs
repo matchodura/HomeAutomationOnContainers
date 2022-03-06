@@ -1,11 +1,11 @@
-﻿using Logging.API.Profiles;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client.Options;
 using Serilog;
 using Status.API.Entities;
 using Status.API.MQTT;
 using Status.API.Options;
+using Status.API.Profiles;
 using Status.API.Services;
 using Status.API.Services.MQTT;
 using Status.API.Services.RabbitMQ;
@@ -33,7 +33,7 @@ namespace Status.Extensions
             });
 
             services.AddAutoMapper(typeof(AutoMapperStatusProfile).Assembly);
-            //services.AddGrpc();
+            services.AddGrpc();
             //services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             //services.AddDbContext<RpiDataContext>(options =>

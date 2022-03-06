@@ -34,7 +34,7 @@ namespace HomeControl
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SensorLogging", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "HomeControl", Version = "v1" });
             });
         }
 

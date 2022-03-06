@@ -1,0 +1,43 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "HomeControl.API";
+
+service GrpcItem{
+    rpc GetItemFromStatus(GetItemRequest) returns (StatusApiResponse);
+    rpc GetAllItemsFromStatus(GetItemRequest) returns (StatusApiAllItemsResponse);
+}
+
+message GetItemRequest {
+    string deviceName = 1;
+}
+
+message GrpcItemModel{
+
+    int32 id = 1;
+    string name = 2;
+    DeviceType devicetype = 3;
+    string topic = 4;
+    string ip = 5;
+    string mosquittousername = 6;
+    string mosquittopassword = 7;
+    google.protobuf.Timestamp dateadded = 8;
+    google.protobuf.Timestamp datemodified = 9;
+
+}
+
+enum DeviceType
+{
+    Sensor = 0;
+    Socket = 1;
+    Lamp = 2;
+}
+
+message StatusApiResponse {
+    GrpcItemModel item = 1;
+}
+
+message StatusApiAllItemsResponse {
+    repeated GrpcItemModel item = 1;
+}

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Entities.DHT;
+using HomeControl.API.DTOs;
+using HomeControl.API.Entities;
 
 namespace HomeControl.API.Profiles
 {
@@ -7,14 +9,18 @@ namespace HomeControl.API.Profiles
     {    
         public AutoMapperHomeControlProfile()
         {
-            CreateMap<GrpcDHTModel, DHT>()
-                .ForMember(d => d.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(d => d.SensorName, opt => opt.MapFrom(src => src.Sensorname))
-                .ForMember(d => d.Temperature, opt => opt.MapFrom(src => src.Temperature))
-                .ForMember(d => d.Humidity, opt => opt.MapFrom(src => src.Humidity))
-                .ForMember(d => d.DewPoint, opt => opt.MapFrom(src => src.Dewpoint))
-                .ForMember(d => d.Time, opt => opt.MapFrom(src => src.Time.ToDateTime().ToUniversalTime()));
+            CreateMap<RoomDTO, Room>()
+                .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(d => d.Level, opt => opt.MapFrom(src => src.Level))
+                .ForMember(d => d.RoomType, opt => opt.MapFrom(src => src.RoomType))
+                .ForMember(d => d.Topic, opt => opt.MapFrom(src => src.Topic));
 
+            CreateMap<ItemDeviceDTO, RoomItem>()
+                .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(d => d.DeviceType, opt => opt.MapFrom(src => src.DeviceType))
+                .ForMember(d => d.Topic, opt => opt.MapFrom(src => src.Topic));
+
+            CreateMap<GrpcItemModel, ItemDeviceDTO>();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Status.API.Services.MQTT
             await mqttClient.SubscribeAsync(
             new MqttTopicFilter
             {
-                Topic = "stat/pokoj/dht/RESULT",
+                Topic = "stat/pokoj/mati/dht/RESULT",
                 QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
             },
             new MqttTopicFilter

@@ -1,4 +1,5 @@
 ﻿using HomeControl.API.Infrastructure.Data;
+using HomeControl.API.Interfaces;
 using HomeControl.API.Profiles;
 using HomeControl.API.SyncDataServices.Grpc;
 using Logging.API.Profiles;
@@ -40,9 +41,9 @@ namespace HomeControl.API.Extensions
 
             services.AddAutoMapper(typeof(AutoMapperHomeControlProfile).Assembly);
             services.AddHttpClient();
-            services.AddSingleton<ILoggingDataClient, LoggingDataClient>();       
+            services.AddSingleton<IGrpcClient, GrpcClient>();       
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
-
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             //services.AddHostedService<DataPollingService>();
 
             return services;

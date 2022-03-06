@@ -12,13 +12,13 @@ using HomeControl.API.Entities;
 
 namespace HomeControl.API.Controllers
 {
-    public class HomeController : BaseApiController
+    public class RoomController : BaseApiController
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public HomeController(ILogger logger, IUnitOfWork unitOfWork, IMapper mapper)
+        public RoomController(ILogger logger, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -67,6 +67,8 @@ namespace HomeControl.API.Controllers
 
             var room = _mapper.Map<Room>(newRoom);
 
+            var currentDate = DateTime.UtcNow;
+            room.LastModified  = currentDate;
 
             _unitOfWork.RoomRepository.AddRoom(room);
 
@@ -85,6 +87,9 @@ namespace HomeControl.API.Controllers
             if (roomExists == false) return NotFound("Room doesn't exist!");
 
             var room = _mapper.Map<Room>(updatedRoom);
+
+            var currentDate = DateTime.UtcNow;
+            room.LastModified = currentDate;
 
             _unitOfWork.RoomRepository.UpdateRoom(room);
 
