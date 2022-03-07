@@ -20,9 +20,29 @@ namespace HomeControl.API.SyncDataServices.Grpc
             _mapper = mapper;
         }
 
-        public List<ItemDeviceDTO> GetAllDevicesFromStatusAPI(string deviceName)
+
+
+        public List<ItemDeviceDTO> GetAllDevicesFromStatusAPI()
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"--> calling grpc service {_configuration["GrpcStatus"]}");
+            var channel = GrpcChannel.ForAddress(_configuration["GrpcStatus"]);
+            //var client = new GrpcLogging.GrpcLoggingClient(channel);
+            var client = new GrpcItem.GrpcItemClient(channel);
+            var request = new GetAllItemsRequest();
+
+            try
+            {
+                var reply = client.GetAllItemsFromStatus(request);
+
+                var response = _mapper.Map<List<ItemDeviceDTO>>(reply.Item);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not call grpc service {ex.Message}");
+                return null;
+            }
         }
 
         public ItemDeviceDTO GetDeviceFromStatusAPI(string deviceName)
@@ -47,6 +67,7 @@ namespace HomeControl.API.SyncDataServices.Grpc
                 return null;
             }
         }
+               
 
         public List<DHT> ReturnAllDhts()
         {

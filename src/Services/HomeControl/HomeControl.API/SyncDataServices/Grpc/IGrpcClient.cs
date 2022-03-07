@@ -8,6 +8,6 @@ namespace HomeControl.API.SyncDataServices.Grpc
     {
         List<DHT> ReturnAllDhts();
         ItemDeviceDTO GetDeviceFromStatusAPI(string deviceName);
-        List<ItemDeviceDTO> GetAllDevicesFromStatusAPI(string deviceName);
+        List<ItemDeviceDTO> GetAllDevicesFromStatusAPI();
     }
 }

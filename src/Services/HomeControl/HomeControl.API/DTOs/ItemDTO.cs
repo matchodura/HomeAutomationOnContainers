@@ -2,7 +2,7 @@
 {
     public class ItemDTO
     {
-        public int RoomID { get; set; }
-        public int DeviceID { get; set; }
+        public string RoomName { get; set; }
+        public string DeviceName { get; set; }
     }
 }

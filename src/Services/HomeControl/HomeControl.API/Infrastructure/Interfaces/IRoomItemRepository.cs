@@ -11,6 +11,6 @@ namespace HomeControl.API.Infrastructure.Interfaces
         void UpdateItem(string itemName);
         Task<List<RoomItem>> GetAllItems();
         Task<RoomItem> GetItem(string itemName);
-        bool ItemAlreadyExists(int deviceId);
+        bool ItemAlreadyExists(string itemName);
     }
 }

@@ -38,9 +38,9 @@ namespace HomeControl.API.Infrastructure.Data
             return await _context.Items.FirstOrDefaultAsync(x => x.Name == itemName);
         }
 
-        public bool ItemAlreadyExists(int deviceId)
+        public bool ItemAlreadyExists(string itemName)
         {
-            return _context.Items.Any(x => x.DeviceId.Equals(deviceId));
+            return _context.Items.Any(x => x.DeviceId.Equals(itemName));
         }
 
         public void UpdateItem(string itemName)

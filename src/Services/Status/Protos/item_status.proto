@@ -19,7 +19,7 @@ message GrpcItemModel{
 
     int32 id = 1;
     string name = 2;
-    DeviceType devicetype = 3;
+    string devicetype = 3;
     string topic = 4;
     string ip = 5;
     string mosquittousername = 6;

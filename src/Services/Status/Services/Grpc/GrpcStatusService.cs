@@ -9,7 +9,7 @@ namespace Status.API.Services.Grpc
     {
         private readonly IMapper _mapper;
         private readonly MongoDataContext _deviceService;
-        public GrpcStatusService(IMapper mapper, MongoDataContext deviceService )
+        public GrpcStatusService(IMapper mapper, MongoDataContext deviceService)
         {
             _deviceService = deviceService;
             _mapper = mapper;
@@ -18,31 +18,23 @@ namespace Status.API.Services.Grpc
         public override async Task<StatusApiResponse> GetItemFromStatus(GetItemRequest request, ServerCallContext context)
         {
             var response = new StatusApiResponse();
-            //var dhts = await _unitOfWork.DHTRepository.GetAllValues();
+            var device = await _deviceService.GetAsync(request.DeviceName);             
+            var deviceToSend = _mapper.Map<GrpcItemModel>(device);
 
-            //foreach (var dht in dhts)
-            //{
-            //    response.Dht.Add(_mapper.Map<GrpcDHTModel>(dht));
-            //}
-            var test = await _deviceService.GetAsync(request.DeviceName);
-
-            var test2 = _mapper.Map<GrpcItemModel>(test);
-
-            response.Item = test2;
+            response.Item = deviceToSend;
             return await Task.FromResult(response);
         }
 
         public override async Task<StatusApiAllItemsResponse> GetAllItemsFromStatus(GetAllItemsRequest request, ServerCallContext context)
         {
             var response = new StatusApiAllItemsResponse();
-            //var dhts = await _unitOfWork.DHTRepository.GetAllValues();
+            var devices = await _deviceService.GetAsync();
 
-            //foreach (var dht in dhts)
-            //{
-            //    response.Dht.Add(_mapper.Map<GrpcDHTModel>(dht));
-            //}
+            foreach (var device in devices)
+            {
+                response.Item.Add(_mapper.Map<GrpcItemModel>(device));
+            }
 
-            var test = await _deviceService.GetAsync();
             return await Task.FromResult(response);
         }
     }

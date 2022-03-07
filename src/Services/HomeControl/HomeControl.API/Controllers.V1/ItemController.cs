@@ -49,54 +49,55 @@ namespace HomeControl.API.Controllers
 
         [Route("test")]
         [HttpGet]
-        public async Task<IActionResult> GetAllItems(string deviceName)
+        public async Task<ActionResult<ItemDeviceDTO>> GetItemByName(string deviceName)
         {
-            var test = _grpcClient.GetDeviceFromStatusAPI(deviceName);
+            var item = _grpcClient.GetDeviceFromStatusAPI(deviceName);
 
-            //if (rooms.Count == 0) return NotFound("There are no configured rooms!");
-
-            //var resultsToDisplay = _mapper.Map<RoomDTO>(rooms);
-
-            //return Ok(resultsToDisplay);
-            return Ok();
+            return Ok(item);
         }
 
-        //[Route("items/all")]
-        //[HttpGet]
-        //public async Task<ActionResult<List<ItemDeviceDTO>>> GetAllItems()
-        //{
-        //    var rooms = await _unitOfWork.RoomRepository.GetAllRooms();
+        [Route("items/all")]
+        [HttpGet]
+        public async Task<ActionResult<List<ItemDeviceDTO>>> GetAllItems()
+        {
+            var items = _grpcClient.GetAllDevicesFromStatusAPI();
 
-        //    if (rooms.Count == 0) return NotFound("There are no configured rooms!");
+            return Ok(items);
+        }
 
-        //    var resultsToDisplay = _mapper.Map<RoomDTO>(rooms);
+        [Route("items")]
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] ItemDTO newItem)
+        {
+            var roomExists = _unitOfWork.RoomRepository.RoomAlreadyExists(newItem.RoomName);
 
-        //    return Ok(resultsToDisplay);
-        //}
+            if (roomExists != true) return BadRequest("Room doesn't exist!");
 
-        //[Route("items")]
-        //[HttpPost]
-        //public async Task<IActionResult> Create([FromBody] ItemDTO newItem)
-        //{
-        //    var roomExists = _unitOfWork.RoomItemRepository.ItemAlreadyExists(newItem.DeviceID);
+            var itemExists = _unitOfWork.RoomItemRepository.ItemAlreadyExists(newItem.DeviceName);
 
-        //    if (roomExists == true) return Conflict("Item already exists!");
+            if (itemExists == true) return Conflict("Item already exists!");
 
-        //    //query to status service to get more data about the item
+            //query to status service to get more data about the item            
+            var itemFromStatusService = _grpcClient.GetDeviceFromStatusAPI(newItem.DeviceName);
 
-        //    var item = _mapper.Map<RoomItem>(itemFromStatusService);
+            var itemToAdd = _mapper.Map<RoomItem>(itemFromStatusService);
 
-        //    var currentDate = DateTime.UtcNow;
-        //    room.LastModified  = currentDate;
-
-        //    _unitOfWork.RoomRepository.AddRoom(room);
-
-        //    if (await _unitOfWork.Complete()) return CreatedAtAction(nameof(Get), new { roomName = room.Name }, room);
-
-        //    return BadRequest();
-        //}
+            _unitOfWork.RoomItemRepository.AddItem(itemToAdd);
 
 
+
+           // var roomToBeUpdated = await _unitOfWork.RoomRepository.GetRoom(newItem.RoomName);
+
+
+
+          
+
+            //_unitOfWork.RoomRepository.UpdateRoom(roomToBeUpdated);
+
+            if (await _unitOfWork.Complete()) return Ok();
+
+            return BadRequest();
+        }
 
     }
 }

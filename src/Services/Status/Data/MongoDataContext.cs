@@ -24,7 +24,7 @@ public class MongoDataContext
     public async Task<List<Device>> GetAsync() =>
         await _deviceCollection.Find(_ => true).ToListAsync();
 
-    public async Task<Device?> GetAsync(string id) =>
+    public async Task<Device> GetAsync(string id) =>
         await _deviceCollection.Find(x => x.Name == id).FirstOrDefaultAsync();
 
     public async Task CreateAsync(Device newDevice) =>
