@@ -1,5 +1,4 @@
 ﻿using HomeControl.API.Infrastructure.Interfaces;
-using Logging.API.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

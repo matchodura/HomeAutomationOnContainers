@@ -1,10 +1,6 @@
 ﻿//using AutoMapper;
-//using Entities.DHT;
-//using Logging.API.Data;
-//using Logging.API.DTOs;
-//using Logging.API.Profiles;
-//using Logging.API.Interfaces;
-//using Logging.API.Services.MQTT;
+//using HomeControl.API.Interfaces;
+//using HomeControl.API.SyncDataServices.Grpc;
 //using Microsoft.Extensions.DependencyInjection;
 //using Microsoft.Extensions.Hosting;
 //using Serilog;
@@ -17,20 +13,20 @@
 
 //namespace HomeControl.API.Services
 //{
-//    public class DataPollingService : IHostedService, IDisposable
+//    public class SensorPollingService : IHostedService, IDisposable
 //    {
 //        private int executionCount = 0;
 //        private readonly ILogger _logger;
 //        private readonly IMapper _mapper;
-//        private readonly IMqttClientService _mqttClientService;
 //        private Timer _timer = null!;
 //        private readonly IServiceScopeFactory _scopeFactory;
+//        private readonly IGrpcClient _grpcClient;
 
-//        public DataPollingService(ILogger logger, IServiceScopeFactory scopeFactory, MqttClientServiceProvider provider, IMapper mapper)
+//        public SensorPollingService(ILogger logger, IServiceScopeFactory scopeFactory, IMapper mapper, IGrpcClient grpcClient)
 //        {
 //            _logger = logger;
 //            _mapper = mapper;
-//            _mqttClientService = provider.MqttClientService;
+//            _grpcClient = grpcClient;
 //            _scopeFactory = scopeFactory;
 //        }
 
@@ -52,14 +48,14 @@
 
 //            try
 //            {
-//                using (var scope = _scopeFactory.CreateScope())
-//                {
-//                    var context = scope.ServiceProvider.GetService<IUnitOfWork>();
-//                    topics = await context.DeviceRepository.GetAllAvailableTopics();
+//                //using (var scope = _scopeFactory.CreateScope())
+//                //{
+//                //    var context = scope.ServiceProvider.GetService<IUnitOfWork>();
+//                //    var sensorsToPoll = context.RoomValueRepository.Get
 
 
-//                    await _mqttClientService.SetupSubscriptionTopics(topics.ToArray());
-//                }
+//                //    await _mqttClientService.SetupSubscriptionTopics(topics.ToArray());
+//                //}
 
 
 //            }
@@ -70,11 +66,11 @@
 
 //            foreach (var topic in topics)
 //            {
-                
+
 //                string commandTopic = $"cmnd/{topic}/status";
 //                string payload = "10";
 //                string response = string.Empty;
-          
+
 //                await _mqttClientService.PublishMessage(commandTopic, payload);
 
 //                //Wait 5 seconds so the client can update the gotten response

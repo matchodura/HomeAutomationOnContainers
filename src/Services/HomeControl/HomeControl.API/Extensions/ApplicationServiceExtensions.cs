@@ -2,7 +2,6 @@
 using HomeControl.API.Interfaces;
 using HomeControl.API.Profiles;
 using HomeControl.API.SyncDataServices.Grpc;
-using Logging.API.Profiles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
