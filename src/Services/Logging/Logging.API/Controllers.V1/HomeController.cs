@@ -42,13 +42,6 @@ namespace Logging.API.Controllers
     
         }
 
-
-        [HttpGet]
-        public IActionResult Index()
-        {
-            return new RedirectResult("~/swagger");
-        }
-
         [Route("mijia")]
         [HttpPost]
         public async Task<ActionResult<Mijia>> GetValuesFromBLE([FromBody] string scriptPath)

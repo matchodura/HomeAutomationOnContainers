@@ -11,6 +11,7 @@ using AutoMapper;
 using HomeControl.API.Entities;
 using HomeControl.API.SyncDataServices.Grpc;
 using Entities.Enums;
+using System.Net;
 
 namespace HomeControl.API.Controllers
 {
@@ -30,44 +31,46 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        [Route("{name:string}")]
+        public async Task<ActionResult<RoomItem>> GeItemByTopic(string topic)
         {
-            return new RedirectResult("~/swagger");
-        }
+            var item = await _unitOfWork.RoomItemRepository.GetItem(topic);
 
-        //[Route("items/{id}")]
-        //[HttpGet]
-        //public async Task<ActionResult<ItemDTO>> Get(string deviceName)
-        //{
-        //    var item = await _unitOfWork.RoomItemRepository.GetItem(deviceName);
-
-        //    if (item == null) return NotFound("Room with that name does not exist!");
-
-        //    var resultToDisplay = _mapper.Map<RoomDTO>(room);
-
-        //    return Ok(resultToDisplay);
-        //}
-
-        [Route("test")]
-        [HttpGet]
-        public async Task<ActionResult<ItemDeviceDTO>> GetItemByName(string deviceName)
-        {
-            var item = _grpcClient.GetDeviceFromStatusAPI(deviceName);
+            if (item == null) return NotFound("Room with that name does not exist!");
 
             return Ok(item);
         }
 
-        [Route("items/all")]
         [HttpGet]
-        public async Task<ActionResult<List<ItemDeviceDTO>>> GetAllItems()
+        [Route("status/{deviceName}")]
+        [ProducesResponseType(typeof(ItemDeviceDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult<ItemDeviceDTO>> GetItemByNameFromStatus(string deviceName)
+        {
+            var item = _grpcClient.GetDeviceFromStatusAPI(deviceName);
+
+            if(item == null) return NotFound("Item doesn't exist!");
+
+            return Ok(item);
+        }
+
+        [HttpGet]
+        [Route("all")]
+        [ProducesResponseType(typeof(List<ItemDeviceDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<ActionResult<List<ItemDeviceDTO>>> GetAllItemsFromStatus()
         {
             var items = _grpcClient.GetAllDevicesFromStatusAPI();
+
+            if(items == null) return NotFound("Devices were not found!");
 
             return Ok(items);
         }
 
-        [Route("items")]
         [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> Create([FromBody] ItemDTO newItem)
         {
             var roomExists = _unitOfWork.RoomRepository.RoomAlreadyExists(newItem.RoomName);
@@ -95,10 +98,28 @@ namespace HomeControl.API.Controllers
 
             _unitOfWork.RoomItemRepository.AddItem(itemToAdd);
 
-            if (await _unitOfWork.Complete()) return Ok();
+            if (await _unitOfWork.Complete()) return CreatedAtAction(nameof(GeItemByTopic), new { deviceName = itemToAdd.Topic }, null);
 
             return BadRequest();
         }
+
+        //todo DELETE
+        //[HttpDelete]
+        //[ProducesResponseType((int)HttpStatusCode.NotFound)]
+        //public async Task<IActionResult> Delete(string roomToBeDeleted)
+        //{
+        //    var roomExists = _unitOfWork.RoomRepository.RoomAlreadyExists(roomToBeDeleted);
+
+        //    if (roomExists == false) return NotFound("Room doesn't exist!");
+
+        //    _unitOfWork.RoomRepository.DeleteRoom(roomToBeDeleted);
+
+        //    if (await _unitOfWork.Complete()) return Ok("Room deleted sucessfuly!");
+
+        //    return BadRequest();
+        //}
+
+        //TODO PUT
 
     }
 }
