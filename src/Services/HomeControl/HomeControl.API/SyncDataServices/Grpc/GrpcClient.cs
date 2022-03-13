@@ -97,8 +97,8 @@ namespace HomeControl.API.SyncDataServices.Grpc
 
         public SensorValueDTO ReturnLastSensorValue(string topicName)
         {
-            Console.WriteLine($"--> calling grpc service {_configuration["GrpcStatus"]}");
-            var channel = GrpcChannel.ForAddress(_configuration["GrpcStatus"]);
+            Console.WriteLine($"--> calling grpc service {_configuration["GrpcLogging"]}");
+            var channel = GrpcChannel.ForAddress(_configuration["GrpcLogging"]);
 
             var client = new GrpcLogging.GrpcLoggingClient(channel);
             var request = new GetSensorValue() { SensorItem = topicName };

@@ -34,7 +34,7 @@ namespace Logging.API.Infrastructure.Data
 
         public async Task<DHT> GetLastValueForDht(string topic)
         {
-            return await _context.DHTs.Where(x => x.SensorName == topic).LastOrDefaultAsync();
-        }
+            return await _context.DHTs.OrderByDescending(x => x.SensorName == topic).FirstAsync();
+        } 
     }
 }

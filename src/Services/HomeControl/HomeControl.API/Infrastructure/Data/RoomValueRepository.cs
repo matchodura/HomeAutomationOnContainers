@@ -1,6 +1,8 @@
 ﻿using HomeControl.API.Entities;
 using HomeControl.API.Infrastructure.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HomeControl.API.Infrastructure.Data
@@ -17,7 +19,7 @@ namespace HomeControl.API.Infrastructure.Data
 
         public void AddValue(RoomValue value)
         {
-            throw new System.NotImplementedException();
+            _context.Values.Add(value);
         }
 
         public void DeleteValue(RoomValue value)
@@ -30,14 +32,14 @@ namespace HomeControl.API.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-        public Task<RoomValue> GetValue(string roomName)
+        public RoomValue GetValue(int roomId)
         {
-            throw new System.NotImplementedException();
+            return  _context.Values.FirstOrDefault(x => x.RoomId == roomId);
         }
 
         public bool RoomItemExists(string topic)
         {
-            throw new System.NotImplementedException();
+            return _context.Values.Any(x => x.Topic.Equals(topic));
         }
 
         public bool RoomValueAlreadyExists(string roomName)
@@ -45,9 +47,11 @@ namespace HomeControl.API.Infrastructure.Data
             throw new System.NotImplementedException();
         }
 
-        public void UpdateValue(RoomValue rovalueom)
+        public void UpdateValue(RoomValue roomValue)
         {
-            throw new System.NotImplementedException();
+            var oldValue = _context.Values.First(x => x.RoomId == roomValue.RoomId);
+
+            _context.Values.Update(oldValue);
         }
     }
 }

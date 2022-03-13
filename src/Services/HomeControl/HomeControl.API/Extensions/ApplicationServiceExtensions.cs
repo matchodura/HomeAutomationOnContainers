@@ -1,6 +1,7 @@
 ﻿using HomeControl.API.Infrastructure.Data;
 using HomeControl.API.Interfaces;
 using HomeControl.API.Profiles;
+using HomeControl.API.Services;
 using HomeControl.API.SyncDataServices.Grpc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ namespace HomeControl.API.Extensions
             services.AddSingleton<IGrpcClient, GrpcClient>();       
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddHostedService<DataPollingService>();
+            services.AddHostedService<SensorPollingService>();
 
             return services;
         }

@@ -31,7 +31,7 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
-        [Route("{name:string}")]
+        [Route("{topic}")]
         public async Task<ActionResult<RoomItem>> GeItemByTopic(string topic)
         {
             var item = await _unitOfWork.RoomItemRepository.GetItem(topic);

@@ -10,6 +10,7 @@ using HomeControl.API.Interfaces;
 using AutoMapper;
 using HomeControl.API.Entities;
 using System.Net;
+using HomeControl.API.DTOs.LoggingAPI;
 
 namespace HomeControl.API.Controllers
 {
@@ -27,7 +28,6 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
-        [Route("{name:string}")]
         [ProducesResponseType(typeof(RoomDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -45,6 +45,26 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
+        [Route("values")]
+        [ProducesResponseType(typeof(RoomDisplayDTO), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<RoomDisplayDTO>> GetRoomWithValues(string roomName)
+        {
+            if (string.IsNullOrEmpty(roomName)) return BadRequest("Invalid name of the room!");
+
+            var room = await _unitOfWork.RoomRepository.GetRoom(roomName);
+
+            if (room == null) return NotFound("Room with that name does not exist!");
+
+            var values = _unitOfWork.RoomValueRepository.GetValue(room.Id);
+            var roomToDisplay = _mapper.Map<RoomDTO>(room);
+            var sensorToDisplay = _mapper.Map<SensorValueDTO>(values);
+
+            return Ok(new RoomDisplayDTO() { Room = roomToDisplay, Sensor = sensorToDisplay});
+        }
+
+        [HttpGet]
         [Route("all")]
         [ProducesResponseType(typeof(List<RoomDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -54,7 +74,7 @@ namespace HomeControl.API.Controllers
 
             if (rooms.Count == 0) return NotFound("There are no configured rooms!");
 
-            var resultsToDisplay = _mapper.Map<RoomDTO>(rooms);
+            var resultsToDisplay = _mapper.Map<List<RoomDTO>>(rooms);
 
             return Ok(resultsToDisplay);
         }

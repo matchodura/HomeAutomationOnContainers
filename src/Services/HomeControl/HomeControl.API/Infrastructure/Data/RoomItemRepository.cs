@@ -1,4 +1,5 @@
-﻿using HomeControl.API.Entities;
+﻿using Entities.Enums;
+using HomeControl.API.Entities;
 using HomeControl.API.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -31,6 +32,11 @@ namespace HomeControl.API.Infrastructure.Data
         public async Task<List<RoomItem>> GetAllItems()
         {
             return await _context.Items.ToListAsync();
+        }
+
+        public IEnumerable<RoomItem> GetAllSensors()
+        {
+            return _context.Items.Where(x => x.DeviceType == DeviceType.Sensor).ToList();
         }
 
         public async Task<RoomItem> GetItem(string itemName)

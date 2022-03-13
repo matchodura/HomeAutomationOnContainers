@@ -17,6 +17,10 @@ namespace HomeControl.API.Profiles
                 .ForMember(d => d.RoomType, opt => opt.MapFrom(src => src.RoomType))
                 .ForMember(d => d.Topic, opt => opt.MapFrom(src => src.Topic));
 
+            CreateMap<Room, RoomDTO>();
+            CreateMap<RoomValue, SensorValueDTO>();
+
+
             CreateMap<ItemDeviceDTO, RoomItem>()
                 .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(d => d.DeviceType, opt => opt.MapFrom(src => src.DeviceType))

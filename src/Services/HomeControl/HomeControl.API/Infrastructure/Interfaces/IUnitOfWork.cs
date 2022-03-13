@@ -11,7 +11,6 @@ namespace HomeControl.API.Interfaces
         IRoomRepository RoomRepository { get; }
         IRoomItemRepository RoomItemRepository { get; }
         IRoomValueRepository RoomValueRepository { get; }
-
         Task<bool> Complete();
         bool HasChanges();
     }

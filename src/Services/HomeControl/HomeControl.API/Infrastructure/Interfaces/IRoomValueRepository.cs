@@ -10,10 +10,8 @@ namespace HomeControl.API.Infrastructure.Interfaces
         void DeleteValue(RoomValue value);
         void UpdateValue(RoomValue rovalueom);
         Task<List<RoomValue>> GetAllValues();
-        Task<RoomValue> GetValue(string roomName);
+        RoomValue GetValue(int roomId);
         bool RoomValueAlreadyExists(string roomName);
-
         bool RoomItemExists(string topic);
-
     }
 }

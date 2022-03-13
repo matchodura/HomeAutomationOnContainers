@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Grpc.Core;
 using Logging.API.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace Logging.API.Services.Grpc
@@ -32,6 +33,7 @@ namespace Logging.API.Services.Grpc
         public override async Task<LoggingApiSensorValueResponse> GetSensorLoggingValue(GetSensorValue request, ServerCallContext context)
         {
             var response = new LoggingApiSensorValueResponse();
+            Console.WriteLine("test");
             var value = await _unitOfWork.SensorRepository.GetLastValueForDht(request.SensorTopic);
                         
             var valueToSend = _mapper.Map<GrpcSensorModel>(value);

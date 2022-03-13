@@ -17,7 +17,7 @@ namespace HomeControl.API.Infrastructure.Data
 
         public IRoomItemRepository RoomItemRepository => new RoomItemRepository(_context);
 
-        public IRoomValueRepository RoomValueRepository => throw new System.NotImplementedException();
+        public IRoomValueRepository RoomValueRepository => new RoomValueRepository(_context);
 
         public async Task<bool> Complete()
         {
