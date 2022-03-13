@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Logging.API.Infrastructure.Data
 {
-    public class DHTRepository : IDHTRepository
+    public class SensorRepository : ISensorRepository
     {
         private readonly RpiDataContext _context;
 
-        public DHTRepository(RpiDataContext context)
+        public SensorRepository(RpiDataContext context)
         {
             _context = context;
         }
@@ -32,9 +32,9 @@ namespace Logging.API.Infrastructure.Data
             return await _context.DHTs.Where(x => x.SensorName == sensorName).ToListAsync();
         }
 
-        public async Task<DHT> GetLastValueForDht(string sensorName)
+        public async Task<DHT> GetLastValueForDht(string topic)
         {
-            return await _context.DHTs.Where(x => x.SensorName == sensorName).LastOrDefaultAsync();
+            return await _context.DHTs.Where(x => x.SensorName == topic).LastOrDefaultAsync();
         }
     }
 }

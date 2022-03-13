@@ -12,6 +12,5 @@ namespace HomeControl.API.Entities
         public double Humidity { get; set; }
         public double DewPoint { get; set; }
         public DateTime LastModified { get; set; }
-        public ICollection<Room> Rooms { get; set; }
     }
 }

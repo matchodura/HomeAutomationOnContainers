@@ -12,5 +12,8 @@ namespace HomeControl.API.Infrastructure.Interfaces
         Task<List<RoomValue>> GetAllValues();
         Task<RoomValue> GetValue(string roomName);
         bool RoomValueAlreadyExists(string roomName);
+
+        bool RoomItemExists(string topic);
+
     }
 }

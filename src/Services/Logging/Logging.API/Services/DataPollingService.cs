@@ -107,7 +107,7 @@ namespace Logging.API.Services
                     using (var scope = _scopeFactory.CreateScope())
                     {
                         var context = scope.ServiceProvider.GetService<IUnitOfWork>();
-                        context.DHTRepository.AddValuesForDHT(result);
+                        context.SensorRepository.AddValuesForDHT(result);
                         await context.Complete();
 
                     }

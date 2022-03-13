@@ -36,3 +36,4 @@ message StatusApiResponse {
 message StatusApiAllItemsResponse {
     repeated GrpcItemModel item = 1;
 }
+

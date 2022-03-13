@@ -26,14 +26,6 @@ message GrpcItemModel{
     string mosquittopassword = 7;
     google.protobuf.Timestamp dateadded = 8;
     google.protobuf.Timestamp datemodified = 9;
-
-}
-
-enum DeviceType
-{
-    Sensor = 0;
-    Socket = 1;
-    Lamp = 2;
 }
 
 message StatusApiResponse {
@@ -43,3 +35,4 @@ message StatusApiResponse {
 message StatusApiAllItemsResponse {
     repeated GrpcItemModel item = 1;
 }
+

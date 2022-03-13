@@ -2,7 +2,7 @@
 using Entities.DHT;
 using Grpc.Net.Client;
 using HomeControl.API.DTOs;
-using Logging.API;
+using HomeControl.API.DTOs.LoggingAPI;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -19,8 +19,6 @@ namespace HomeControl.API.SyncDataServices.Grpc
             _configuration = configuration;
             _mapper = mapper;
         }
-
-
 
         public List<ItemDeviceDTO> GetAllDevicesFromStatusAPI()
         {
@@ -67,7 +65,6 @@ namespace HomeControl.API.SyncDataServices.Grpc
                 return null;
             }
         }
-               
 
         public List<DHT> ReturnAllDhts()
         {
@@ -96,6 +93,29 @@ namespace HomeControl.API.SyncDataServices.Grpc
                 return null;
             }
 
+        }
+
+        public SensorValueDTO ReturnLastSensorValue(string topicName)
+        {
+            Console.WriteLine($"--> calling grpc service {_configuration["GrpcStatus"]}");
+            var channel = GrpcChannel.ForAddress(_configuration["GrpcStatus"]);
+
+            var client = new GrpcLogging.GrpcLoggingClient(channel);
+            var request = new GetSensorValue() { SensorItem = topicName };
+
+            try
+            {
+                var reply = client.GetSensorLoggingValue(request);
+
+                var response = _mapper.Map<SensorValueDTO>(reply.Sensor);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not call grpc service {ex.Message}");
+                return null;
+            }
         }
 
 

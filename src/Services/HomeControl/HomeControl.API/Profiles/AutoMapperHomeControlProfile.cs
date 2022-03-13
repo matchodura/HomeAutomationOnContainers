@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Entities.DHT;
+using Entities.Enums;
 using Google.Protobuf.WellKnownTypes;
 using HomeControl.API.DTOs;
+using HomeControl.API.DTOs.LoggingAPI;
 using HomeControl.API.Entities;
 
 namespace HomeControl.API.Profiles
@@ -29,7 +30,15 @@ namespace HomeControl.API.Profiles
                 .ForMember(d => d.IP, opt => opt.MapFrom(src => src.Ip))
                 .ForMember(d => d.MosquittoUsername, opt => opt.MapFrom(src => src.Mosquittousername))
                 .ForMember(d => d.MosquittoPassword, opt => opt.MapFrom(src => src.Mosquittopassword))
-                .ForMember(d => d.DateAdded, opt => opt.MapFrom(src => src.Dateadded.ToDateTime().ToUniversalTime()));
+                .ForMember(d => d.DateAdded, opt => opt.MapFrom(src => src.Dateadded.ToDateTime().ToUniversalTime()))
+                .ForMember(d => d.DateModified, opt => opt.MapFrom(src => src.Datemodified.ToDateTime().ToUniversalTime()));
+
+            CreateMap<GrpcSensorModel, SensorValueDTO>()
+                .ForMember(d => d.Topic, opt => opt.MapFrom(src => src.Topic))
+                .ForMember(d => d.Temperature, opt => opt.MapFrom(src => src.Temperature))
+                .ForMember(d => d.Humidity, opt => opt.MapFrom(src => src.Humidity))
+                .ForMember(d => d.DewPoint, opt => opt.MapFrom(src => src.Dewpoint))
+                .ForMember(d => d.TimePolled, opt => opt.MapFrom(src => src.Time.ToDateTime().ToUniversalTime()));
 
         }
     }

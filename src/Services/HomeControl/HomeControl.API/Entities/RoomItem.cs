@@ -14,6 +14,5 @@ namespace HomeControl.API.Entities
         public DeviceType DeviceType { get; set; }
         public DeviceStatus DeviceStatus { get; set; }
         public DateTime LastChecked { get; set; }
-        public ICollection<Room> Rooms { get; set; }
     }
 }

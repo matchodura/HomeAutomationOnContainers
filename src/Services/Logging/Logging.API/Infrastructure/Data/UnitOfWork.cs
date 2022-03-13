@@ -18,7 +18,7 @@ namespace Logging.API.Data
         }
 
         public IMijiaRepository MijiaRepository => new MijiaRepository(_context);
-        public IDHTRepository DHTRepository => new DHTRepository(_context);
+        public ISensorRepository SensorRepository => new SensorRepository(_context);
         public IDeviceRepository DeviceRepository => new DeviceRepository(_context);
 
         public async Task<bool> Complete()

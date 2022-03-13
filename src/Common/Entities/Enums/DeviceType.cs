@@ -10,6 +10,7 @@ namespace Entities.Enums
     {
         Sensor,
         Socket,
-        Lamp
+        Lamp,
+        Unknown
     }
 }

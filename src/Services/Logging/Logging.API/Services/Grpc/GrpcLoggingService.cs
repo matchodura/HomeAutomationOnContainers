@@ -19,12 +19,24 @@ namespace Logging.API.Services.Grpc
         public override async Task<LoggingApiResponse> GetAllLoggingValues(GetAllRequest request, ServerCallContext context)
         {
             var response = new LoggingApiResponse();
-            var dhts =  await _unitOfWork.DHTRepository.GetAllValues();
+            var dhts = await _unitOfWork.SensorRepository.GetAllValues();
 
             foreach (var dht in dhts)
             {
                 response.Dht.Add(_mapper.Map<GrpcDHTModel>(dht));
             }
+
+            return await Task.FromResult(response);
+        }
+
+        public override async Task<LoggingApiSensorValueResponse> GetSensorLoggingValue(GetSensorValue request, ServerCallContext context)
+        {
+            var response = new LoggingApiSensorValueResponse();
+            var value = await _unitOfWork.SensorRepository.GetLastValueForDht(request.SensorTopic);
+                        
+            var valueToSend = _mapper.Map<GrpcSensorModel>(value);
+
+            response.Sensor = valueToSend;
 
             return await Task.FromResult(response);
         }

@@ -6,21 +6,36 @@ option csharp_namespace = "HomeControl.API";
 
 service GrpcLogging{
     rpc GetAllLoggingValues(GetAllRequest) returns (LoggingApiResponse);
+    rpc GetSensorLoggingValue(GetSensorValue) returns (LoggingApiSensorValueResponse);
 }
 
 message GetAllRequest {}
 
-message GrpcDHTModel{
+message GetSensorValue{
+    string sensorItem = 1;
+}
 
+message GrpcDHTModel{
     int32 id = 1;
     string sensorname = 2;
     double temperature = 3;
     double humidity = 4;
     double dewpoint = 5;
     google.protobuf.Timestamp time = 6;
+}
 
+message GrpcSensorModel{
+    string topic = 1;
+    double temperature = 2;
+    double humidity = 3;
+    double dewpoint = 4;
+    google.protobuf.Timestamp time = 5;
 }
 
 message LoggingApiResponse {
     repeated GrpcDHTModel dht = 1;
+}
+
+message LoggingApiSensorValueResponse{
+    GrpcSensorModel sensor = 1;
 }

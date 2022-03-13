@@ -10,6 +10,7 @@ using HomeControl.API.Interfaces;
 using AutoMapper;
 using HomeControl.API.Entities;
 using HomeControl.API.SyncDataServices.Grpc;
+using Entities.Enums;
 
 namespace HomeControl.API.Controllers
 {
@@ -82,17 +83,17 @@ namespace HomeControl.API.Controllers
 
             var itemToAdd = _mapper.Map<RoomItem>(itemFromStatusService);
 
+
+            Enum.TryParse(itemFromStatusService.DeviceType, out DeviceType deviceType);
+            itemToAdd.DeviceType = deviceType;
+            
+            var roomToBeUpdated = await _unitOfWork.RoomRepository.GetRoom(newItem.RoomName);
+
+            itemToAdd.RoomId = roomToBeUpdated.Id;
+            var currentDate = DateTime.UtcNow;
+            itemToAdd.LastChecked = currentDate;
+
             _unitOfWork.RoomItemRepository.AddItem(itemToAdd);
-
-
-
-           // var roomToBeUpdated = await _unitOfWork.RoomRepository.GetRoom(newItem.RoomName);
-
-
-
-          
-
-            //_unitOfWork.RoomRepository.UpdateRoom(roomToBeUpdated);
 
             if (await _unitOfWork.Complete()) return Ok();
 
