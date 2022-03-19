@@ -14,6 +14,8 @@ namespace Entities.DHT
 
         [JsonPropertyName("sensorName")]
         public string SensorName { get; set; }
+        [JsonPropertyName("topic")]
+        public string Topic { get; set; }
         [JsonPropertyName("temperature")]
         public double Temperature { get; set; }
         [JsonPropertyName("humidity")]

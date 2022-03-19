@@ -3,6 +3,7 @@ using System;
 using Logging.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Logging.API.Migrations
 {
     [DbContext(typeof(RpiDataContext))]
-    partial class RpiDataContextModelSnapshot : ModelSnapshot
+    [Migration("20220319164604_UpdateAvailableDevicesWithName")]
+    partial class UpdateAvailableDevicesWithName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

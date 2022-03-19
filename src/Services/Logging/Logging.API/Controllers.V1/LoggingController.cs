@@ -15,10 +15,11 @@ using AutoMapper;
 using Entities.DHT;
 using static Logging.API.Extensions.DateTimeExtensions;
 using Entities.Configuration;
+using Logging.API.Filters;
 
 namespace Logging.API.Controllers
 {
-    public class HomeController : BaseApiController
+    public class LoggingController : BaseApiController
     {
         private readonly ILogger _logger;
         private readonly IUnitOfWork _unitOfWork;
@@ -34,7 +35,7 @@ namespace Logging.API.Controllers
         //    _mqttClientService = provider.MqttClientService;
         //}
 
-        public HomeController(ILogger logger, IUnitOfWork unitOfWork,  IMapper mapper)
+        public LoggingController(ILogger logger, IUnitOfWork unitOfWork,  IMapper mapper)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
@@ -206,27 +207,28 @@ namespace Logging.API.Controllers
             return Ok(devices);
         }
 
-        //[HttpPost]
-        //[Route("devices")]
-        //public async Task<ActionResult<IEnumerable<Mijia>>> AddNewDevice([FromBody] DeviceDTO device)
-        //{
-        //    var newDevice = _mapper.Map<Device>(device);
+
+        //new api commands for frontend
+        [HttpGet]
+        [Route("values")]
+        public async Task<IActionResult> GetSensorValues([FromQuery] string sensorName, [FromQuery] DateFilter dateFilter)
+        {
+
+            var sensorValues = await _unitOfWork.SensorRepository.GetAllValuesForSensorWithTimeSpan(sensorName, dateFilter);
+
+            if (sensorValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
+
+            var groupedBySensorName = sensorValues.GroupBy(x => new { x.SensorName, x.Topic}).Select(g => new
+            {
+                Name = g.Key.SensorName,
+                Topic = g.Key.Topic,
+                Values = g.Select(x => new { x.Temperature, x.Humidity, x.DewPoint, x.Time }).OrderByDescending(x => x.Time)
+            });
 
 
-        //    var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
+            //var test = new SensorLoggingDTO() { SensorName = groupedBySensorName.First(), }
 
-        //    //TODO fix this
-        //    if (devices.Contains(newDevice)) return Conflict("Device already exists in database!");
-
-        //    //postgresql bug
-        //    var currentDate = DateTime.UtcNow;
-        //    newDevice.DateModified = currentDate;
-
-        //    _unitOfWork.DeviceRepository.AddDevice(newDevice);
-        //    await _unitOfWork.Complete();
-
-        //    //TODO maybe a redirection of some sort on completion?
-        //    return Ok(device);
-        //}
+            return Ok(groupedBySensorName);
+        }
     }
 }
