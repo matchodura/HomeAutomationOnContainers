@@ -44,6 +44,11 @@ namespace Logging.API.Infrastructure.Data
                         .ToListAsync();
         }
 
+        public async Task<string[]> GetDevicesWithValuesInDatabase()
+        {
+            return await _context.DHTs.Select(x => x.SensorName).Distinct().ToArrayAsync();
+        }
+
         public async Task<DHT> GetLastValueForDht(string topic)
         {
             return await _context.DHTs.OrderByDescending(x => x.SensorName == topic).FirstAsync();

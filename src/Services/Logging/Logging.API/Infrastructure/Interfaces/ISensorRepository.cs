@@ -13,5 +13,6 @@ namespace Logging.API.Interfaces
         Task<List<DHT>> GetAllValues();
         Task<DHT> GetLastValueForDht(string topic);
         Task<List<DHT>> GetAllValuesForSensorWithTimeSpan(string sensorName, DateFilter dateFilter);
+        Task<string[]> GetDevicesWithValuesInDatabase();
     }
 }

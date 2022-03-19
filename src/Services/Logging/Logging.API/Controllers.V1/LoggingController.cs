@@ -198,9 +198,9 @@ namespace Logging.API.Controllers
 
         [HttpGet]
         [Route("devices")]
-        public async Task<ActionResult<IEnumerable<Device>>> GetAllDevices()
+        public async Task<ActionResult<IEnumerable<string>>> GetDevicesWithValues()
         {
-            var devices = await _unitOfWork.DeviceRepository.GetAllDevices();
+            var devices = await _unitOfWork.SensorRepository.GetDevicesWithValuesInDatabase();
 
             if (devices.Count() == 0) return NotFound("No devices are currently configured!");
 
