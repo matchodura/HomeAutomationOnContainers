@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Entities.Enums;
 using Google.Protobuf.WellKnownTypes;
 using Status.API;
 using Status.API.DTOs;
@@ -24,6 +25,10 @@ namespace Status.API.Profiles
                 .ForMember(d => d.Dateadded, opt => opt.MapFrom(src => Timestamp.FromDateTime(src.DateAdded.ToUniversalTime())))
                 .ForMember(d => d.Datemodified, opt => opt.MapFrom(src => Timestamp.FromDateTime(src.DateModified.ToUniversalTime())));
 
+
+            CreateMap<Device, DeviceStatusResponseDTO>()
+                .ForMember(d => d.UptimeInSeconds, opt => opt.MapFrom(src => src.State.UptimeSec))
+                .ForMember(d => d.Status, opt => opt.MapFrom(src => System.Enum.GetName(typeof(DeviceStatus), src.DeviceStatus)));
         }
     }
 }

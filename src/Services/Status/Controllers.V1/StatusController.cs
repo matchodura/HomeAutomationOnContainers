@@ -19,21 +19,26 @@ namespace Status.Controllers.V1
             _logger = logger;
         }
 
-        [HttpGet]
-        public async Task<List<Device>> Get() =>
-            await _deviceService.GetAsync();
+        //[HttpGet]
+        //public async Task<List<Device>> Get() =>
+        //    await _deviceService.GetAsync();
 
-        [HttpGet("{id:length(24)}")]
-        public async Task<ActionResult<Device>> Get(string id)
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] string sensorName)
         {
-            var device = await _deviceService.GetAsync(id);
+            //TODO here return correct sensor
+            var device = await _deviceService.GetAsync(sensorName);
+
+            Thread.Sleep(5000);
 
             if (device is null)
             {
                 return NotFound();
             }
 
-            return device;
+         
+            var response = _mapper.Map<DeviceStatusResponseDTO>(device);
+            return Ok(response);
         }
 
         [HttpPost]

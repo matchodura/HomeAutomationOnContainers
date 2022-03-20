@@ -198,7 +198,7 @@ namespace Logging.API.Controllers
 
         [HttpGet]
         [Route("devices")]
-        public async Task<ActionResult<IEnumerable<string>>> GetDevicesWithValues()
+        public async Task<ActionResult<IEnumerable<string>>> GetDevicesWithLoggedValues()
         {
             var devices = await _unitOfWork.SensorRepository.GetDevicesWithValuesInDatabase();
 
@@ -213,7 +213,7 @@ namespace Logging.API.Controllers
         [Route("values")]
         public async Task<IActionResult> GetSensorValues([FromQuery] string sensorName, [FromQuery] DateFilter dateFilter)
         {
-
+            Thread.Sleep(2000);
             var sensorValues = await _unitOfWork.SensorRepository.GetAllValuesForSensorWithTimeSpan(sensorName, dateFilter);
 
             if (sensorValues.Count() == 0) return NotFound("Sensor with that name does not exist!");
@@ -222,13 +222,10 @@ namespace Logging.API.Controllers
             {
                 Name = g.Key.SensorName,
                 Topic = g.Key.Topic,
-                Values = g.Select(x => new { x.Temperature, x.Humidity, x.DewPoint, x.Time }).OrderByDescending(x => x.Time)
+                Values = g.Select(x => new { x.Temperature, x.Humidity, x.DewPoint, x.Time }).OrderBy(x => x.Time)
             });
 
-
-            //var test = new SensorLoggingDTO() { SensorName = groupedBySensorName.First(), }
-
-            return Ok(groupedBySensorName);
+            return Ok(groupedBySensorName.First());
         }
     }
 }
