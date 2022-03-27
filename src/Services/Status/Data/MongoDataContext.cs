@@ -1,6 +1,8 @@
 ﻿using Status.API.Entities;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using AutoMapper;
+using Status.API.DTOs;
 
 namespace Status.API.Services;
 
@@ -9,7 +11,7 @@ public class MongoDataContext
     private readonly IMongoCollection<Device> _deviceCollection;
 
     public MongoDataContext(
-        IOptions<DeviceDatabaseSettings> deviceDatabaseSettings)
+        IOptions<DeviceDatabaseSettings> deviceDatabaseSettings , IMapper mapper)
     {
         var mongoClient = new MongoClient(
             deviceDatabaseSettings.Value.ConnectionString);
@@ -18,14 +20,18 @@ public class MongoDataContext
             deviceDatabaseSettings.Value.DatabaseName);
 
         _deviceCollection = mongoDatabase.GetCollection<Device>(
-            deviceDatabaseSettings.Value.DeviceCollectionName);
+            deviceDatabaseSettings.Value.DeviceCollectionName);      
     }
 
     public async Task<List<Device>> GetAsync() =>
         await _deviceCollection.Find(_ => true).ToListAsync();
 
+    public List<Device> GetAllSync() =>
+     _deviceCollection.Find(_ => true).ToList();
+
     public async Task<Device> GetAsync(string id) =>
         await _deviceCollection.Find(x => x.Name == id).FirstOrDefaultAsync();
+
 
     public async Task CreateAsync(Device newDevice) =>
         await _deviceCollection.InsertOneAsync(newDevice);

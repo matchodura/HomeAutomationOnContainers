@@ -97,7 +97,7 @@ namespace Logging.API.Extensions
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("_service", "Logging.API")
+                .Enrich.WithProperty("_service", "logging-api")
                 .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Console()
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)

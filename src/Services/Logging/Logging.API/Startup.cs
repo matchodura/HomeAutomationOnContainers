@@ -57,6 +57,8 @@ namespace Logging.API
             services.AddApplicationServices(_config);
             services.AddMvc();
             services.AddControllers();
+            services.AddHealthChecks();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Logging", Version = "v1" });
@@ -92,6 +94,7 @@ namespace Logging.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapGrpcService<GrpcLoggingService>();
 
                 endpoints.MapGet("/protos/sensors.proto", async context =>

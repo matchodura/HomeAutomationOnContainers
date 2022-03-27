@@ -29,6 +29,7 @@ namespace Status.API.Profiles
             CreateMap<Device, DeviceStatusResponseDTO>()
                 .ForMember(d => d.UptimeInSeconds, opt => opt.MapFrom(src => src.State.UptimeSec))
                 .ForMember(d => d.Status, opt => opt.MapFrom(src => System.Enum.GetName(typeof(DeviceStatus), src.DeviceStatus)));
+
         }
     }
 }

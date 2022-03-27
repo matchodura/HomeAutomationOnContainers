@@ -17,6 +17,8 @@ using Status.API.MQTT;
 using Status.Extensions;
 using Status.API.Entities;
 using Status.API.Services.Grpc;
+using Status.API.HubConfig;
+using System.Text.Json.Serialization;
 
 namespace Status.API
 {
@@ -56,15 +58,14 @@ namespace Status.API
         {
             services.AddApplicationServices(_config);
             services.AddMvc();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(x =>
+                         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             services.AddHealthChecks();
-       
-
-         
+               
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Logging", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Status", Version = "v1" });
             });
         }
 
@@ -97,9 +98,10 @@ namespace Status.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapGrpcService<GrpcStatusService>();
-
+                endpoints.MapHub<StatusHub>("/status-hub");
                 endpoints.MapGet("/protos/sensors.proto", async context =>
                 {
                     await context.Response.WriteAsync(File.ReadAllText("Protos/item_status.proto"));

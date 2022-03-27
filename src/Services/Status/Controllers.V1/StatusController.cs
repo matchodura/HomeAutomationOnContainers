@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Status.API.DTOs;
 using Status.API.Entities;
+using Status.API.HubConfig;
 using Status.API.Services;
+using Status.API.TimerFeatures;
 
 namespace Status.Controllers.V1
 {
@@ -11,12 +14,14 @@ namespace Status.Controllers.V1
         private readonly MongoDataContext _deviceService;
         private readonly IMapper _mapper;
         private readonly Serilog.ILogger _logger;
+        private IHubContext<StatusHub> _hub;
 
-        public StatusController(MongoDataContext deviceService, IMapper mapper, Serilog.ILogger logger)
+        public StatusController(MongoDataContext deviceService, IMapper mapper, Serilog.ILogger logger, IHubContext<StatusHub> hub)
         {
             _deviceService = deviceService;
             _mapper = mapper;
             _logger = logger;
+            _hub = hub;
         }
 
         //[HttpGet]
@@ -35,8 +40,7 @@ namespace Status.Controllers.V1
             {
                 return NotFound();
             }
-
-         
+                     
             var response = _mapper.Map<DeviceStatusResponseDTO>(device);
             return Ok(response);
         }
@@ -81,6 +85,7 @@ namespace Status.Controllers.V1
             await _deviceService.RemoveAsync(device.Id);
 
             return NoContent();
-        }
+        }         
+
     }
 }

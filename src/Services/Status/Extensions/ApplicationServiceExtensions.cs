@@ -48,7 +48,10 @@ namespace Status.Extensions
             services.AddMqttClientHostedService();
 
             services.AddHostedService<DeviceCheckService>();
+            services.AddHostedService<StatusUpdateService>();
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
+            services.AddSignalR();
 
             return services;
         }
@@ -98,7 +101,7 @@ namespace Status.Extensions
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("_service", "Status.API")
+                .Enrich.WithProperty("_service", "status-api")
                 .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
                 .ReadFrom.Configuration(configuration)
