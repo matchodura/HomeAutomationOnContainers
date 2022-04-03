@@ -8,5 +8,6 @@ namespace HomeControl.API.DTOs
         public RoomLevel Level { get; set; }
         public RoomType RoomType { get; set; }
         public string Topic { get; set; }
+        public string FrontEndID { get; set; }
     }
 }

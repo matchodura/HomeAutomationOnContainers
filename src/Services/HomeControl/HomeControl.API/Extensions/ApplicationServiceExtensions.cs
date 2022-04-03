@@ -33,6 +33,15 @@ namespace HomeControl.API.Extensions
             //    c.DefaultRequestHeaders.Add("User-Agent", "HttpClientFactory-Sample");
             //});
 
+            services.AddCors(options => {
+                options.AddPolicy("CorsPolicy", builder => builder
+                 .WithOrigins("http://localhost:4200/")
+                 .SetIsOriginAllowed((host) => true)
+                 .AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowCredentials());
+            });
+
             services.AddDbContext<DataContext>(options =>
             {
                 string connStr = config.GetConnectionString("DefaultConnection");
@@ -57,7 +66,7 @@ namespace HomeControl.API.Extensions
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("_service", "SensorLogging")
+                .Enrich.WithProperty("_service", "homecontrol-api")
                 .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Console()
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)

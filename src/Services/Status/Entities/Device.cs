@@ -28,7 +28,6 @@ namespace Status.API.Entities
         //[JsonConverter(typeof(StringEnumConverter))]
         [BsonRepresentation(BsonType.String)]
         public DeviceStatus DeviceStatus { get; set; }
-
     }
 
 

@@ -80,18 +80,35 @@ namespace Status.API.Services
                     //Wait 5 seconds so the client can update the gotten response
                     Thread.Sleep(5000);
                     response = _mqttClientService.GetResponse();
-                    var serializedResponse = JsonSerializer.Deserialize<State>(response);
-
+                    _mqttClientService.CleanResponse();
+                    //TODO: double check this, seems not to be working correctly-> after another item is connected(previously disconnected)
+                    //then the item before in the array of topics is being polled and marked as alive
+               
                     if (!string.IsNullOrEmpty(response))
                     {
+                        var serializedResponse = JsonSerializer.Deserialize<State>(response);
+
                         deviceToBeUpdated.State = serializedResponse;
                         deviceToBeUpdated.LastAlive = DateTime.Now;
                         deviceToBeUpdated.DeviceStatus = DeviceStatus.Alive;
+
                     }
                     else
                     {
                         deviceToBeUpdated.DeviceStatus = DeviceStatus.Dead;
                         deviceToBeUpdated.State = null;
+
+                        deviceToBeUpdated.LastCheck = DateTime.Now;
+                        await _dbContext.UpdateAsync(deviceToBeUpdated.Id, deviceToBeUpdated);
+
+                        _logger.ForContext("Name", deviceToBeUpdated.Name)
+                                .ForContext("Topic", deviceToBeUpdated.Topic)
+                                .ForContext("IP", deviceToBeUpdated.IP)
+                                .ForContext("LastCheck", deviceToBeUpdated.LastAlive)
+                                .ForContext("Status", deviceToBeUpdated.DeviceStatus)
+                                .Warning($"Warning occured for topic: {topic}: Device {deviceToBeUpdated.Name} is not reachable!");
+
+                        continue;
                     }
 
 
@@ -152,7 +169,6 @@ namespace Status.API.Services
                         .ForContext("IP", deviceToBeUpdated.IP)
                         .ForContext("LastCheck", deviceToBeUpdated.LastAlive)
                         .Error($"Error occured for topic: {topic}: {ex.Message}");
-
                 }
             }
         }

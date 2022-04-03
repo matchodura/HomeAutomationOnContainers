@@ -18,6 +18,7 @@ namespace HomeControl.API.Infrastructure.Data
         public IRoomItemRepository RoomItemRepository => new RoomItemRepository(_context);
 
         public IRoomValueRepository RoomValueRepository => new RoomValueRepository(_context);
+        public IHomeLayoutRepository HomeLayoutRepository => new HomeLayoutRepository(_context);
 
         public async Task<bool> Complete()
         {

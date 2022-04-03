@@ -15,6 +15,7 @@ namespace Status.API.Services.MQTT
         Task PublishMessage(string commandTopic, string payload);
         //Task SetupSubscriptionTopic(string subscriptionTopic);
         string GetResponse();
+        void CleanResponse();
         string ReturnCurrentTopic();
     }
 }

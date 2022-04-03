@@ -19,6 +19,7 @@ namespace HomeControl.API.Profiles
 
             CreateMap<Room, RoomDTO>();
             CreateMap<RoomValue, SensorValueDTO>();
+            CreateMap<HomeLayoutDTO, HomeLayout>();
 
 
             CreateMap<ItemDeviceDTO, RoomItem>()

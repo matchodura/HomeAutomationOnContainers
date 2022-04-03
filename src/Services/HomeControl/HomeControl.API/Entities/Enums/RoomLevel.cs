@@ -5,7 +5,7 @@
         Basement,
         GroundFloor,
         FirstFloor,
-        Attic,
-        Outside
+        Attic
+        //Outside
     }
 }

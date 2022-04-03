@@ -3,6 +3,7 @@ using System;
 using HomeControl.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HomeControl.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220330171713_Layout")]
+    partial class Layout
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,9 +56,6 @@ namespace HomeControl.API.Migrations
 
                     b.Property<int>("AliveDevicesCount")
                         .HasColumnType("integer");
-
-                    b.Property<string>("FrontendID")
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("LastModified")
                         .HasColumnType("timestamp with time zone");
@@ -140,24 +139,7 @@ namespace HomeControl.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId")
-                        .IsUnique();
-
                     b.ToTable("Values");
-                });
-
-            modelBuilder.Entity("HomeControl.API.Entities.RoomValue", b =>
-                {
-                    b.HasOne("HomeControl.API.Entities.Room", null)
-                        .WithOne("RoomValue")
-                        .HasForeignKey("HomeControl.API.Entities.RoomValue", "RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("HomeControl.API.Entities.Room", b =>
-                {
-                    b.Navigation("RoomValue");
                 });
 #pragma warning restore 612, 618
         }

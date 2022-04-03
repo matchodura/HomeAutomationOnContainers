@@ -56,7 +56,7 @@ namespace Status.API.Services.MQTT
             },
             new MqttTopicFilter
             {
-                Topic = "stat/pokoj/gniazdko/RESULT",
+                Topic = "stat/pokoj/mati/gniazdko/RESULT",
                 QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
             });
         }
@@ -90,6 +90,11 @@ namespace Status.API.Services.MQTT
         public string GetResponse()
         {
             return _response;
+        }
+
+        public void CleanResponse()
+        {
+            _response = "";
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)

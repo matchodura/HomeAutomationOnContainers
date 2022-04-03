@@ -70,19 +70,19 @@ namespace HomeControl.API.Services
 
                         else
                         {
-                            var response = _grpcClient.ReturnLastSensorValue(sensor.Topic);
+                            //var response = _grpcClient.ReturnLastSensorValue(sensor.Topic);
 
-                            var valueToUpdate = context.RoomValueRepository.GetValue(sensor.RoomId);
+                            //var valueToUpdate = context.RoomValueRepository.GetValue(sensor.RoomId);
 
-                            valueToUpdate.Temperature = response.Temperature;
-                            valueToUpdate.Humidity = response.Humidity;
-                            valueToUpdate.DewPoint = response.DewPoint;
+                            //valueToUpdate.Temperature = response.Temperature;
+                            //valueToUpdate.Humidity = response.Humidity;
+                            //valueToUpdate.DewPoint = response.DewPoint;
 
-                            var currentDate = DateTime.UtcNow;
-                            valueToUpdate.LastModified = currentDate;
+                            //var currentDate = DateTime.UtcNow;
+                            //valueToUpdate.LastModified = currentDate;
                             
-                            context.RoomValueRepository.UpdateValue(valueToUpdate);
-                            await context.Complete();
+                            //context.RoomValueRepository.UpdateValue(valueToUpdate);
+                            //await context.Complete();
                         }
 
                     }

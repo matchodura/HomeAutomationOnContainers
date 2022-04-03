@@ -11,6 +11,8 @@ using AutoMapper;
 using HomeControl.API.Entities;
 using System.Net;
 using HomeControl.API.DTOs.LoggingAPI;
+using System.Text;
+using HomeControl.API.Entities.Enums;
 
 namespace HomeControl.API.Controllers
 {
@@ -55,18 +57,19 @@ namespace HomeControl.API.Controllers
 
             var room = await _unitOfWork.RoomRepository.GetRoom(roomName);
 
-            if (room == null) return NotFound("Room with that name does not exist!");
+            //if (room == null) return NotFound("Room with that name does not exist!");
 
-            var values = _unitOfWork.RoomValueRepository.GetValue(room.Id);
-            var roomToDisplay = _mapper.Map<RoomDTO>(room);
-            var sensorToDisplay = _mapper.Map<SensorValueDTO>(values);
+            //var values = _unitOfWork.RoomValueRepository.GetValue(room.Id);
+            //var roomToDisplay = _mapper.Map<RoomDTO>(room);
+            //var sensorToDisplay = _mapper.Map<SensorValueDTO>(values);
 
-            return Ok(new RoomDisplayDTO() { Room = roomToDisplay, Sensor = sensorToDisplay});
+            //return Ok(new RoomDisplayDTO() { Room = roomToDisplay, Sensor = sensorToDisplay});
+            return Ok();
         }
 
         [HttpGet]
         [Route("all")]
-        [ProducesResponseType(typeof(List<RoomDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(List<RoomDisplayDTO>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetAllRooms()
         {
@@ -74,9 +77,7 @@ namespace HomeControl.API.Controllers
 
             if (rooms.Count == 0) return NotFound("There are no configured rooms!");
 
-            var resultsToDisplay = _mapper.Map<List<RoomDTO>>(rooms);
-
-            return Ok(resultsToDisplay);
+            return Ok(rooms);
         }
 
         [HttpPost]
@@ -136,5 +137,67 @@ namespace HomeControl.API.Controllers
 
             return BadRequest();
         }
+
+
+
+
+        [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [Route("layout")]
+        public async Task<IActionResult> AddLayout([FromBody] HomeLayoutDTO newLayout)
+        {
+
+            //rethink this, currently we are sending the path to the file, works fine locally
+            //but about when reading it from remote location(rpi)? fileshare, or pass whole file from
+            //the frontend to the controller -> TODO!!
+
+            var file = System.IO.File.ReadAllBytes(newLayout.Layout);
+
+            var layout = _mapper.Map<HomeLayout>(newLayout);
+
+            layout.File = file;
+
+            var currentDate = DateTime.UtcNow;
+            layout.LastModified = currentDate;
+
+            _unitOfWork.HomeLayoutRepository.Add(layout);
+
+            if (await _unitOfWork.Complete()) return Ok();
+
+            return BadRequest();
+        }
+
+        [HttpGet]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [Route("layout")]
+        public ActionResult GetLayout([FromQuery] int level)
+        { 
+            var layout =  _unitOfWork.HomeLayoutRepository.Get(level);
+
+            if (layout == null) return NotFound("There is no layout like that!");
+
+            var image =  Convert.ToBase64String(layout.File);            
+
+            return Ok(new {Id = layout.Id, Level = layout.Level, Image = image});
+        }
+
+        [HttpGet]
+        [Route("names")]
+        public ActionResult GetLayoutNames()
+        {
+            var layouts = _unitOfWork.HomeLayoutRepository.GetAll();
+
+            var test = layouts.Select(x => new LayoutDTO {
+                    ID = x.Level,
+                    Name = Enum.GetName(typeof(RoomLevel), x.Level)
+                 });
+
+            return Ok(test);
+        }
+
+
+
+
     }
 }

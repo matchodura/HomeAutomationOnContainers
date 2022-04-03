@@ -30,12 +30,12 @@ namespace HomeControl.API.Infrastructure.Data
 
         public async Task<List<Room>> GetAllRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            return await _context.Rooms.Include(x => x.RoomValue).ToListAsync();
         }
 
         public async Task<Room> GetRoom(string roomName)
         {
-            return await _context.Rooms.FirstOrDefaultAsync(x => x.Name == roomName);
+            return await _context.Rooms.Include(x => x.RoomValue).FirstOrDefaultAsync(x => x.Name == roomName);
         }
 
         public bool RoomAlreadyExists(string roomName)
