@@ -29,8 +29,8 @@ namespace HomeControl.API.Infrastructure.Data
         }
 
         public async Task<List<Room>> GetAllRooms()
-        {
-            return await _context.Rooms.Include(x => x.RoomValue).ToListAsync();
+        { 
+            return await _context.Rooms.Include(x => x.RoomValue).Include(x => x.RoomItem).ToListAsync();
         }
 
         public async Task<Room> GetRoom(string roomName)

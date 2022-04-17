@@ -34,6 +34,11 @@ namespace HomeControl.API.Infrastructure.Data
             return await _context.Items.ToListAsync();
         }
 
+        public async Task<List<RoomItem>> GetAllItemsByRoomId(int roomID)
+        {
+            return await _context.Items.Where(x => x.RoomId == roomID).ToListAsync();
+        }
+
         public IEnumerable<RoomItem> GetAllSensors()
         {
             return _context.Items.Where(x => x.DeviceType == DeviceType.Sensor).ToList();

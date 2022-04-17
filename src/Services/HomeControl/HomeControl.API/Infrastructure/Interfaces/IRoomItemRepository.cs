@@ -10,6 +10,7 @@ namespace HomeControl.API.Infrastructure.Interfaces
         void DeleteItem(string itemName);
         void UpdateItem(RoomItem item);
         Task<List<RoomItem>> GetAllItems();
+        Task<List<RoomItem>> GetAllItemsByRoomId(int roomID);
         IEnumerable<RoomItem> GetAllSensors();
         Task<RoomItem> GetItem(string itemName);
         bool ItemAlreadyExists(string itemName);

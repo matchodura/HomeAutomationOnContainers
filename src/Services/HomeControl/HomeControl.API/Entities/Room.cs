@@ -1,6 +1,7 @@
 ﻿using Entities.Enums;
 using HomeControl.API.Entities.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace HomeControl.API.Entities
 {
@@ -15,6 +16,6 @@ namespace HomeControl.API.Entities
         public int AliveDevicesCount { get; set; }
         public DateTime LastModified { get; set; }    
         public RoomValue RoomValue { get; set; }
-        public RoomItem RoomItem { get; set; }
+        public List<RoomItem> RoomItem { get; set; }
     }
 }

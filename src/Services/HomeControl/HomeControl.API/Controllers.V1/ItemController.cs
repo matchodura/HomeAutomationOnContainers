@@ -31,15 +31,30 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
-        [Route("{topic}")]
-        public async Task<ActionResult<RoomItem>> GeItemByTopic(string topic)
+        [Route("{roomId}")]
+        public async Task<ActionResult<List<RoomItem>>> GetItemsByRoom(int roomId)
         {
-            var item = await _unitOfWork.RoomItemRepository.GetItem(topic);
+            var items = await _unitOfWork.RoomItemRepository.GetAllItemsByRoomId(roomId);
 
-            if (item == null) return NotFound("Room with that name does not exist!");
+            if (!items.Any()) return NotFound("Room doesn't have any items configured!");
 
-            return Ok(item);
+            return Ok(items);
         }
+
+
+        [HttpGet]
+        [Route("all-items")]
+        public async Task<ActionResult<List<RoomItemDTO>>> GetAllItems()
+        {
+            var items = await _unitOfWork.RoomItemRepository.GetAllItems();
+
+            if (!items.Any()) return NotFound("No Items were configured!");
+
+
+            var itemsToDisplay = _mapper.Map<List<RoomItemDTO>>(items);
+            return Ok(itemsToDisplay);
+        }
+
 
         [HttpGet]
         [Route("status/{deviceName}")]
@@ -98,29 +113,14 @@ namespace HomeControl.API.Controllers
 
             _unitOfWork.RoomItemRepository.AddItem(itemToAdd);
 
-            if (await _unitOfWork.Complete()) return CreatedAtAction(nameof(GeItemByTopic), new { deviceName = itemToAdd.Topic }, null);
+            if (await _unitOfWork.Complete()) return Ok();
+                    
+            //TODO
+            //CreatedAtAction(nameof(GeItemByTopic), new { deviceName = itemToAdd.Topic }, null);
 
             return BadRequest();
         }
-
-        //todo DELETE
-        //[HttpDelete]
-        //[ProducesResponseType((int)HttpStatusCode.NotFound)]
-        //public async Task<IActionResult> Delete(string roomToBeDeleted)
-        //{
-        //    var roomExists = _unitOfWork.RoomRepository.RoomAlreadyExists(roomToBeDeleted);
-
-        //    if (roomExists == false) return NotFound("Room doesn't exist!");
-
-        //    _unitOfWork.RoomRepository.DeleteRoom(roomToBeDeleted);
-
-        //    if (await _unitOfWork.Complete()) return Ok("Room deleted sucessfuly!");
-
-        //    return BadRequest();
-        //}
-
-        //TODO PUT
-
+         
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -141,6 +141,9 @@ namespace HomeControl.API.Controllers
             var statusOfSwitch = _grpcClient.SendCommandToStatusService(command);
 
             itemToControl.Status = statusOfSwitch;
+
+            var currentDate = DateTime.UtcNow;
+            itemToControl.LastChecked = currentDate;
 
             _unitOfWork.RoomItemRepository.UpdateItem(itemToControl);
             await _unitOfWork.Complete();

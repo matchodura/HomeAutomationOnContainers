@@ -45,6 +45,8 @@ namespace HomeControl.API.Profiles
                 .ForMember(d => d.DewPoint, opt => opt.MapFrom(src => src.Dewpoint))
                 .ForMember(d => d.TimePolled, opt => opt.MapFrom(src => src.Time.ToDateTime().ToUniversalTime()));
 
+            CreateMap<RoomItem, RoomItemDTO>();
+
         }
     }
 }
