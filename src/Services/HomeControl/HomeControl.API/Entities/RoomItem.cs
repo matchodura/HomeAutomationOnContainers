@@ -11,6 +11,7 @@ namespace HomeControl.API.Entities
         public string Name { get; set; }
         public int DeviceId { get; set; }//deviceId in the mongoDb under Status.API
         public string Topic { get; set; }
+        public string Status { get; set; }
         public DeviceType DeviceType { get; set; }
         public DeviceStatus DeviceStatus { get; set; }
         public DateTime LastChecked { get; set; }

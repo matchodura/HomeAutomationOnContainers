@@ -1,0 +1,19 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "HomeControl.API";
+
+service GrpcItemControl{
+    rpc ControlSwitch(ControlSwitchRequest) returns (ControlSwitchResponse);
+}
+
+message ControlSwitchRequest {
+    string topic = 1;
+    string command = 2;
+}
+
+
+message ControlSwitchResponse {
+    string response = 1;
+}

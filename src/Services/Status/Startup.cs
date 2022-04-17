@@ -101,6 +101,7 @@ namespace Status.API
 
                 endpoints.MapHealthChecks("/health");
                 endpoints.MapGrpcService<GrpcStatusService>();
+                endpoints.MapGrpcService<GrpcControlService>();
                 endpoints.MapHub<StatusHub>("/status-hub");
                 endpoints.MapGet("/protos/sensors.proto", async context =>
                 {

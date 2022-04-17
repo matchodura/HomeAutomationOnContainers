@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Protos\item_control.proto" />
     <None Remove="Protos\item_status.proto" />
     <None Remove="Protos\sensors.proto" />
   </ItemGroup>
@@ -60,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\item_control.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\item_status.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\sensors.proto" GrpcServices="Client" />
   </ItemGroup>

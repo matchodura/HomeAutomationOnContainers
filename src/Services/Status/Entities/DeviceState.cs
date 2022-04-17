@@ -23,6 +23,7 @@
         public int Sleep { get; set; }
         public int LoadAvg { get; set; }
         public int MqttCount { get; set; }
+        public string POWER { get; set; } = null!;
         public Wifi Wifi { get; set; } = null!;
     }
 }

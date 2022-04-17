@@ -11,5 +11,6 @@ namespace HomeControl.API.SyncDataServices.Grpc
         ItemDeviceDTO GetDeviceFromStatusAPI(string deviceName);
         List<ItemDeviceDTO> GetAllDevicesFromStatusAPI();
         SensorValueDTO ReturnLastSensorValue(string topic);
+        string SendCommandToStatusService(CommandDTO command);
     }
 }

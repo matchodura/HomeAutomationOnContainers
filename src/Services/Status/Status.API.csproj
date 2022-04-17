@@ -101,6 +101,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Protos\item_control.proto" />
     <None Remove="Protos\item_status.proto" />
   </ItemGroup>
 
@@ -110,6 +111,7 @@
 
 
 	<ItemGroup>
+		<Protobuf Include="Protos\item_control.proto" GrpcServices="Server" />
 		<Protobuf Include="Protos\item_status.proto" GrpcServices="Server" />
 	</ItemGroup>
 

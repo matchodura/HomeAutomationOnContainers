@@ -49,11 +49,9 @@ namespace HomeControl.API.Infrastructure.Data
             return _context.Items.Any(x => x.DeviceId.Equals(itemName));
         }
 
-        public void UpdateItem(string itemName)
+        public void UpdateItem(RoomItem item)
         {
-            var oldItem = _context.Items.First(x => x.Name == itemName);
-
-            _context.Items.Update(oldItem);
+            _context.Items.Update(item);
         }
     }
 }

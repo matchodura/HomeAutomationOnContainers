@@ -8,7 +8,7 @@ namespace HomeControl.API.Infrastructure.Interfaces
     {
         void AddItem(RoomItem item);
         void DeleteItem(string itemName);
-        void UpdateItem(string itemName);
+        void UpdateItem(RoomItem item);
         Task<List<RoomItem>> GetAllItems();
         IEnumerable<RoomItem> GetAllSensors();
         Task<RoomItem> GetItem(string itemName);

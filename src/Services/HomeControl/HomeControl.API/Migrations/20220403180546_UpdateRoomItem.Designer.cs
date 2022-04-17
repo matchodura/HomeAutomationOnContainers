@@ -3,6 +3,7 @@ using System;
 using HomeControl.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HomeControl.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220403180546_UpdateRoomItem")]
+    partial class UpdateRoomItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,16 +106,10 @@ namespace HomeControl.API.Migrations
                     b.Property<int>("RoomId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("text");
-
                     b.Property<string>("Topic")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoomId")
-                        .IsUnique();
 
                     b.ToTable("Items");
                 });
@@ -152,15 +148,6 @@ namespace HomeControl.API.Migrations
                     b.ToTable("Values");
                 });
 
-            modelBuilder.Entity("HomeControl.API.Entities.RoomItem", b =>
-                {
-                    b.HasOne("HomeControl.API.Entities.Room", null)
-                        .WithOne("RoomItem")
-                        .HasForeignKey("HomeControl.API.Entities.RoomItem", "RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("HomeControl.API.Entities.RoomValue", b =>
                 {
                     b.HasOne("HomeControl.API.Entities.Room", null)
@@ -172,8 +159,6 @@ namespace HomeControl.API.Migrations
 
             modelBuilder.Entity("HomeControl.API.Entities.Room", b =>
                 {
-                    b.Navigation("RoomItem");
-
                     b.Navigation("RoomValue");
                 });
 #pragma warning restore 612, 618

@@ -15,5 +15,6 @@ namespace HomeControl.API.Entities
         public int AliveDevicesCount { get; set; }
         public DateTime LastModified { get; set; }    
         public RoomValue RoomValue { get; set; }
+        public RoomItem RoomItem { get; set; }
     }
 }

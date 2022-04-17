@@ -22,7 +22,7 @@ namespace Status.API.Entities
         public DateTime DateAdded { get; set; }
         public DateTime DateModified { get; set; }
         public DateTime LastCheck { get; set; }
-        public DateTime LastAlive { get; set; }
+        public DateTime LastAlive { get; set; }  
         public State State { get; set; } = null!;
 
         //[JsonConverter(typeof(StringEnumConverter))]

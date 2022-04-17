@@ -118,6 +118,29 @@ namespace HomeControl.API.SyncDataServices.Grpc
             }
         }
 
+        public string SendCommandToStatusService(CommandDTO command)
+        {
+            Console.WriteLine($"--> calling grpc service {_configuration["GrpcControl"]}");
+            var channel = GrpcChannel.ForAddress(_configuration["GrpcControl"]);
+            //var client = new GrpcLogging.GrpcLoggingClient(channel);
+            var client = new GrpcItemControl.GrpcItemControlClient(channel);
+            var request = new ControlSwitchRequest() { Topic = command.Topic, Command = command.Command };
 
+            try
+            {
+                var response = client.ControlSwitch(request);
+
+                var status = System.Text.Json.JsonDocument.Parse(response.ToString());
+
+
+
+                return status.RootElement.GetProperty("response").ToString();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Could not call grpc service {ex.Message}");
+                return null;
+            }
+        }
     }
 }

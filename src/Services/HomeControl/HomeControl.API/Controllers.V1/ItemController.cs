@@ -121,5 +121,32 @@ namespace HomeControl.API.Controllers
 
         //TODO PUT
 
+
+        [HttpPost]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [Route("control-switch")]
+        public async Task<IActionResult> ControlSwitch([FromBody] SwitchControlDTO control)
+        {
+
+            var itemToControl = await _unitOfWork.RoomItemRepository.GetItem(control.DeviceName);
+
+            CommandDTO command = new CommandDTO()
+            {
+                RoomId = itemToControl.RoomId,
+                Command = control.Command,
+                Topic = itemToControl.Topic
+            };
+
+            //send command to the status service via grpc -> on/off switch
+            var statusOfSwitch = _grpcClient.SendCommandToStatusService(command);
+
+            itemToControl.Status = statusOfSwitch;
+
+            _unitOfWork.RoomItemRepository.UpdateItem(itemToControl);
+            await _unitOfWork.Complete();
+
+            return Ok(statusOfSwitch);
+        }
+
     }
 }
