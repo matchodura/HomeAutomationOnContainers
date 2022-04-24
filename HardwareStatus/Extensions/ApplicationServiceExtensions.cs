@@ -1,5 +1,9 @@
-﻿using HardwareStatus.API.Profiles;
+﻿using HardwareStatus.API.Infrastructure.Data;
+using HardwareStatus.API.Infrastructure.Interfaces;
+using HardwareStatus.API.Profiles;
+using HardwareStatus.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -27,9 +31,17 @@ namespace HardwareStatus.Extensions
                  .AllowCredentials());
             });
 
-            services.AddAutoMapper(typeof(AutoMapperHardwareProfile).Assembly);
+            services.AddDbContext<DataContext>(options =>
+            {
+                string connStr = config.GetConnectionString("DefaultConnection");
+                options.UseNpgsql(connStr);
+            });
 
+            services.AddAutoMapper(typeof(AutoMapperHardwareProfile).Assembly);
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
+            services.AddSignalR();
+            services.AddHostedService<HardwareStatusUpdateService>();
 
             return services;
         }

@@ -1,3 +1,4 @@
+using HardwareStatus.API.HubConfig;
 using HardwareStatus.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -71,6 +72,7 @@ namespace HardwareStatus.API
             {
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
+                endpoints.MapHub<StatusHub>("/hardware-status-hub");
             });
 
 

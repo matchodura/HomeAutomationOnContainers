@@ -72,7 +72,6 @@ namespace HomeControl.API.Extensions
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
                 .ReadFrom.Configuration(configuration)                
                 .CreateLogger();
-
         }
     }
     
