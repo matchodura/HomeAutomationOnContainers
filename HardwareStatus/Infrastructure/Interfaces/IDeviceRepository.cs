@@ -10,6 +10,10 @@ namespace HardwareStatus.API.Infrastructure.Interfaces
         void AddDevices(List<Device> devices);
         void DeleteDevice(Device device);
         void UpdateDevice(Device device);
+        void UpdateDevices(List<Device> devices);
+
+        void TruncateTable();
+        Task<bool> Save();
         Task<List<Device>> GetAllDevices();
         Task<Device> GetDevice(string deviceName);
     }

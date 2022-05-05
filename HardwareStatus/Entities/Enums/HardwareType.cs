@@ -1,6 +1,6 @@
 ﻿namespace HardwareStatus.API.Enums
 {
-    public enum DeviceType
+    public enum HardwareType
     {
         Computer,
         Smartphone,

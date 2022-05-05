@@ -3,15 +3,17 @@ using System;
 using HardwareStatus.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace HardwareStatus.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220503174640_AddFriendlyName")]
+    partial class AddFriendlyName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,8 +37,11 @@ namespace HardwareStatus.API.Migrations
                     b.Property<int>("DeviceStatus")
                         .HasColumnType("integer");
 
-                    b.Property<int>("HardwareType")
+                    b.Property<int>("DeviceType")
                         .HasColumnType("integer");
+
+                    b.Property<string>("FriendlyName")
+                        .HasColumnType("text");
 
                     b.Property<string>("HostName")
                         .HasColumnType("text");

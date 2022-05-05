@@ -35,19 +35,38 @@ namespace HardwareStatus.API.Infrastructure.Data
 
         public async Task<List<Device>> GetAllDevices()
         {
-            return await _context.Devices.ToListAsync();
+            return await _context.Devices.AsNoTracking().ToListAsync();
         }
 
-        public async Task<Device> GetDevice(string roomName)
+        public async Task<Device> GetDevice(string hostName)
         {
-            return await _context.Devices.FirstOrDefaultAsync(x => x.Name == roomName);
+            return await _context.Devices.FirstOrDefaultAsync(x => x.HostName == hostName);
         }
 
-        public void UpdateDevice(Device room)
+        public async Task<bool> Save()
         {
-            var oldDevice = _context.Devices.First(x => x.Name == room.Name);
+             return await _context.SaveChangesAsync() > 0; 
+        }
 
-            _context.Devices.Update(oldDevice);
+        public void TruncateTable()
+        {
+            var devicesToDelete = _context.Devices.ToList();
+            _context.Devices.RemoveRange(devicesToDelete);
+        }
+
+        public void UpdateDevice(Device device)
+        {
+            var deviceToUpdate = _context.Devices.First(x => x.HostName == device.HostName);
+
+            _context.Devices.Update(deviceToUpdate);
+        }
+
+        public void UpdateDevices(List<Device> devices)
+        {
+            foreach (var dev in devices)
+            {
+                _context.Devices.Update(dev);
+            }
         }
     }
 }

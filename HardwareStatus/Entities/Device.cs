@@ -7,7 +7,7 @@ namespace HardwareStatus.API.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public DeviceType DeviceType { get; set; }
+        public HardwareType HardwareType { get; set; }
         public string HostName { get; set; } = null!;
         public string IP { get; set; } = null!;
         public string MAC { get; set; } = null!;

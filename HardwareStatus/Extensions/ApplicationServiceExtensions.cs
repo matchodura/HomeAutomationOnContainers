@@ -42,6 +42,7 @@ namespace HardwareStatus.Extensions
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             services.AddSignalR();
             services.AddHostedService<HardwareStatusUpdateService>();
+            services.AddHostedService<HardwareStatusScanService>();
 
             return services;
         }

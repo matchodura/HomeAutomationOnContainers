@@ -18,7 +18,7 @@ namespace HardwareStatus.API.NetworkScanner
             for (int i = start; i <= end; i++)
             {
                 byte[] bytes = BitConverter.GetBytes(i);
-                int timeout = 250;
+                int timeout = 1000;
                 var ipAddress = new IPAddress(new[] { bytes[3], bytes[2], bytes[1], bytes[0] });
 
                 Ping ping = new Ping();
@@ -32,6 +32,35 @@ namespace HardwareStatus.API.NetworkScanner
                 }
 
             }
+
+            return devices;
+        }
+
+        public static List<KnownDevices> ScanOfKnownDevices(string[] addresses)
+        {
+            int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
+            int end = BitConverter.ToInt32(new byte[] { 255, 0, 168, 192 }, 0);
+            List<KnownDevices> devices = new List<KnownDevices>();
+
+
+            foreach(var address in addresses)
+            {
+                int timeout = 500;
+
+                Ping ping = new Ping();
+                PingReply pingresult = ping.Send(address.ToString(), timeout);
+
+                if (pingresult.Status.ToString() == "Success")
+                {           
+                
+                    devices.Add(new KnownDevices() {IP = address.ToString(), TimeOfScan = DateTime.UtcNow, Status = Enums.DeviceStatus.Online });
+                }
+                else
+                {
+                    devices.Add(new KnownDevices() {IP = address.ToString(), TimeOfScan = DateTime.UtcNow, Status = Enums.DeviceStatus.Offline });
+                }
+            }
+               
 
             return devices;
         }
