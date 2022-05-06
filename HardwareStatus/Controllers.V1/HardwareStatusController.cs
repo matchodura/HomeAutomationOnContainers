@@ -6,6 +6,7 @@ using HardwareStatus.API.NetworkScanner;
 using HardwareStatus.Controllers.V1;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -105,5 +106,23 @@ namespace Status.Controllers.V1
             return Ok();
         }
 
+        [HttpPost]
+        [Route("refresh-device")]
+        public async Task<IActionResult> RefreshDevics([FromBody] Device device)
+        {
+            var devicetoCheck = _unitOfWork.DeviceRepository.GetDevice(device.Name).Result;
+
+            var scannedDevice = Scanner.ScanOfKnownDevices(devicetoCheck.IP);
+
+            devicetoCheck.LastCheck = DateTime.UtcNow;
+            devicetoCheck.LastAlive = scannedDevice.Status == HardwareStatus.API.Enums.DeviceStatus.Online ? DateTime.UtcNow : devicetoCheck.LastAlive;
+            devicetoCheck.DeviceStatus = scannedDevice.Status;
+
+            _unitOfWork.DeviceRepository.UpdateDevice(devicetoCheck);
+            await _unitOfWork.Complete();
+
+            await _hub.Clients.All.SendAsync("hardware-status-data", _unitOfWork.DeviceRepository.GetAllDevices());
+            return Ok("completed!");
+        }
     }
 }

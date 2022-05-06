@@ -2,11 +2,14 @@
 {
     public enum HardwareType
     {
+        Placeholder,
         Computer,
         Smartphone,
         HomeAppliance,
-        IoT,
+        Sensor,
+        Lamp,
         Networking,
-        Unknown
+        Unknown,
+        TV
     }
 }

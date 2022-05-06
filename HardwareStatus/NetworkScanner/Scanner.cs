@@ -64,6 +64,29 @@ namespace HardwareStatus.API.NetworkScanner
 
             return devices;
         }
+        public static KnownDevices ScanOfKnownDevices(string address)
+        {
+            int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
+            int end = BitConverter.ToInt32(new byte[] { 255, 0, 168, 192 }, 0);
+            KnownDevices device = new KnownDevices();
+
+            int timeout = 500;
+
+            Ping ping = new Ping();
+            PingReply pingresult = ping.Send(address.ToString(), timeout);
+
+            if (pingresult.Status.ToString() == "Success")
+            {
+                device = new KnownDevices() { IP = address.ToString(), TimeOfScan = DateTime.UtcNow, Status = Enums.DeviceStatus.Online };
+
+            }
+            else
+            {
+                device = new KnownDevices() { IP = address.ToString(), TimeOfScan = DateTime.UtcNow, Status = Enums.DeviceStatus.Offline };
+            }
+            
+            return device;
+        }
 
         private static string GetHostName(string ipAddress)
         {
