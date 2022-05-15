@@ -112,8 +112,7 @@ namespace HomeControl.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId")
-                        .IsUnique();
+                    b.HasIndex("RoomId");
 
                     b.ToTable("Items");
                 });
@@ -155,8 +154,8 @@ namespace HomeControl.API.Migrations
             modelBuilder.Entity("HomeControl.API.Entities.RoomItem", b =>
                 {
                     b.HasOne("HomeControl.API.Entities.Room", null)
-                        .WithOne("RoomItem")
-                        .HasForeignKey("HomeControl.API.Entities.RoomItem", "RoomId")
+                        .WithMany("RoomItem")
+                        .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

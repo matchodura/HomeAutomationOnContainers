@@ -13,6 +13,6 @@ namespace HomeControl.API.Infrastructure.Interfaces
         Task<List<RoomItem>> GetAllItemsByRoomId(int roomID);
         IEnumerable<RoomItem> GetAllSensors();
         Task<RoomItem> GetItem(string itemName);
-        bool ItemAlreadyExists(string itemName);
+        bool ItemExists(string itemName);
     }
 }

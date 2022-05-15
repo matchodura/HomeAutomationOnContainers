@@ -108,6 +108,34 @@ namespace Status.API.Services
                                 .ForContext("Status", deviceToBeUpdated.DeviceStatus)
                                 .Warning($"Warning occured for topic: {topic}: Device {deviceToBeUpdated.Name} is not reachable!");
 
+                        try
+                        {
+                            var availableDevice = _mapper.Map<AvailableDeviceDTO>(deviceToBeUpdated);
+
+                            if (deviceToBeUpdated.DeviceStatus == DeviceStatus.Alive)
+                            {
+                                availableDevice.Event = "Device_Alive";
+                                availableDevice.Status = DeviceStatus.Alive;
+                            }
+                            else
+                            {
+                                availableDevice.Event = "Device_Dead";
+                                availableDevice.Status = DeviceStatus.Dead;
+                            }
+
+                            availableDevice.LastUpdated = DateTime.Now;
+                            _messageBusClient.UpdateAvailableDevice(availableDevice);
+
+                            _logger.ForContext("Name", deviceToBeUpdated.Name)
+                                    .ForContext("Status", deviceToBeUpdated.DeviceStatus)
+                                    .Information(
+                                         "Device Status Service is working. Updating message bus topic {topic}", topic);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"--> Could not send asynchronously: {ex.Message}");
+                        }
+
                         continue;
                     }
 
@@ -124,7 +152,9 @@ namespace Status.API.Services
                                  "Device Status Service is working. Checked topic {topic}", topic);
 
 
-                    if(deviceToBeUpdated.DeviceType == DeviceType.Sensor)
+
+
+                    if (deviceToBeUpdated.DeviceType == DeviceType.Switch)
                     {
                         //send to queue that the device has been updated and is alive
                         //data logging api should get that value and update it's own database
@@ -135,7 +165,7 @@ namespace Status.API.Services
                         {
                             var availableDevice = _mapper.Map<AvailableDeviceDTO>(deviceToBeUpdated);
 
-                            if(deviceToBeUpdated.DeviceStatus == DeviceStatus.Alive)
+                            if (deviceToBeUpdated.DeviceStatus == DeviceStatus.Alive)
                             {
                                 availableDevice.Event = "Device_Alive";
                                 availableDevice.Status = DeviceStatus.Alive;
@@ -146,10 +176,13 @@ namespace Status.API.Services
                                 availableDevice.Status = DeviceStatus.Dead;
                             }
 
+                            availableDevice.DeviceType = deviceToBeUpdated.DeviceType;
                             availableDevice.LastUpdated = DateTime.Now;
-                            //_messageBusClient.UpdateAvailableDevice(availableDevice);
+                            availableDevice.Name = deviceToBeUpdated.Name;
+                            _messageBusClient.UpdateAvailableDevice(availableDevice);
 
                             _logger.ForContext("Name", deviceToBeUpdated.Name)
+                                    .ForContext("Type", deviceToBeUpdated.DeviceType)
                                     .ForContext("Status", deviceToBeUpdated.DeviceStatus)
                                     .Information(
                                          "Device Status Service is working. Updating message bus topic {topic}", topic);
@@ -160,7 +193,6 @@ namespace Status.API.Services
                         }
 
                     }
-
                 }
                 catch (Exception ex)
                 {

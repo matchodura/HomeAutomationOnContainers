@@ -9,7 +9,7 @@ namespace Entities.Enums
     public enum DeviceType
     {
         Sensor,
-        Socket,
+        Switch,
         Lamp,
         Unknown
     }

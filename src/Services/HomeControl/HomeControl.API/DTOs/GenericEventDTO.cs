@@ -1,6 +1,6 @@
 ﻿using Entities.Enums;
 
-namespace Logging.API.DTOs
+namespace HomeControl.API.DTOs
 {
     public class GenericEventDTO
     {

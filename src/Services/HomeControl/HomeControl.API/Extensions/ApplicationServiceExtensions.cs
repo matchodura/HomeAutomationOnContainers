@@ -1,8 +1,10 @@
-﻿using HomeControl.API.Infrastructure.Data;
+﻿using HomeControl.API.EventProcessing;
+using HomeControl.API.Infrastructure.Data;
 using HomeControl.API.Interfaces;
 using HomeControl.API.Profiles;
 using HomeControl.API.Services;
 using HomeControl.API.SyncDataServices.Grpc;
+using HomeCtronol.API.Services.RabbitMQ;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -54,7 +56,8 @@ namespace HomeControl.API.Extensions
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddHostedService<SensorPollingService>();
-
+            services.AddSingleton<IEventProcessor, EventProcessor>();
+            services.AddHostedService<MessageBusSubscriber>();
             return services;
         }
 

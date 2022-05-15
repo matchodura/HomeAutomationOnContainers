@@ -92,7 +92,7 @@ namespace HomeControl.API.Controllers
 
             if (roomExists != true) return BadRequest("Room doesn't exist!");
 
-            var itemExists = _unitOfWork.RoomItemRepository.ItemAlreadyExists(newItem.DeviceName);
+            var itemExists = _unitOfWork.RoomItemRepository.ItemExists(newItem.DeviceName);
 
             if (itemExists == true) return Conflict("Item already exists!");
 

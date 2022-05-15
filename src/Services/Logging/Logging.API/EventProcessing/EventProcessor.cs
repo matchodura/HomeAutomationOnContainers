@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Entities.Enums;
 using Logging.API.DTOs;
 using Logging.API.Entities;
 using Logging.API.Infrastructure.Interfaces;
@@ -21,8 +22,8 @@ namespace Logging.API.EventProcessing
             _mapper = mapper;
             _logger = logger;
             _scopeFactory = scopeFactory;
-
         }
+
         public void ProcessEvent(string message)
         {
             var eventType = DetermineEvent(message);
@@ -35,6 +36,8 @@ namespace Logging.API.EventProcessing
                 case EventType.DeviceDead:
                     RemoveDevice(message);
                     break;
+                case EventType.Undetermined:
+                    break;
                 default:
                     break;
             }
@@ -46,18 +49,27 @@ namespace Logging.API.EventProcessing
 
             var eventType = JsonSerializer.Deserialize<GenericEventDTO>(notificationMessage);
 
-            switch (eventType.Event)
+            //check if received update message from status service is meant for sensor 
+            if(eventType.DeviceType == DeviceType.Sensor)
             {
-                case "Device_Alive":
-                    Console.Write("--> Device Alive event Detected");
-                    return EventType.DeviceAlive;
-                case "Device_Dead":
-                    Console.Write("--> Device Dead event Detected");
-                    return EventType.DeviceDead;
-                default:
-                    Console.WriteLine("--> Could not determine event type");
-                    return EventType.Undetermined;
+                switch (eventType.Event)
+                {
+                    case "Device_Alive":
+                        Console.Write("--> Device Alive event Detected");
+                        return EventType.DeviceAlive;
+                    case "Device_Dead":
+                        Console.Write("--> Device Dead event Detected");
+                        return EventType.DeviceDead;
+                    default:
+                        Console.WriteLine("--> Could not determine event type");
+                        return EventType.Undetermined;
+                }
             }
+            else
+            {
+                return EventType.Unsupported;
+            }
+
         }
 
         private void AddDevice(string statusCheckPublishedMessage)
@@ -151,6 +163,7 @@ namespace Logging.API.EventProcessing
     {
         DeviceAlive,
         DeviceDead,
-        Undetermined
+        Undetermined,
+        Unsupported
     }
 }

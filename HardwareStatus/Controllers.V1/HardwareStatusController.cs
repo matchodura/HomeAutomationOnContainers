@@ -101,8 +101,6 @@ namespace Status.Controllers.V1
 
             await _unitOfWork.Complete();
 
-            await _hub.Clients.All.SendAsync("hardware-status-data", _unitOfWork.DeviceRepository.GetAllDevices());
-
             return Ok();
         }
 
@@ -110,7 +108,7 @@ namespace Status.Controllers.V1
         [Route("refresh-device")]
         public async Task<IActionResult> RefreshDevics([FromBody] Device device)
         {
-            var devicetoCheck = _unitOfWork.DeviceRepository.GetDevice(device.Name).Result;
+            var devicetoCheck = _unitOfWork.DeviceRepository.GetDevice(device.HostName).Result;
 
             var scannedDevice = Scanner.ScanOfKnownDevices(devicetoCheck.IP);
 
@@ -121,7 +119,6 @@ namespace Status.Controllers.V1
             _unitOfWork.DeviceRepository.UpdateDevice(devicetoCheck);
             await _unitOfWork.Complete();
 
-            await _hub.Clients.All.SendAsync("hardware-status-data", _unitOfWork.DeviceRepository.GetAllDevices());
             return Ok("completed!");
         }
     }
