@@ -32,7 +32,10 @@ namespace HardwareStatus.API
         {
             services.AddApplicationServices(_config);
             services.AddMvc();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
             services.AddHealthChecks();
 
 

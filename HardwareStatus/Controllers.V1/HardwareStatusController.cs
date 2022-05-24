@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -120,6 +121,27 @@ namespace Status.Controllers.V1
             await _unitOfWork.Complete();
 
             return Ok("completed!");
+        }
+
+
+        [HttpGet]
+        [Route("find-new-devices")]
+        public async Task<IActionResult> FindNewDevices()
+        {
+            //find already configured devices
+            var configuredDevices = await _unitOfWork.DeviceRepository.GetAllDevices();
+
+            //find new devices which previously were not configured -> saves some time pinging
+            var foundDevices = Scanner.ScanNewDevices(configuredDevices.Select(x => x.IP).ToArray());
+
+            //devicetoCheck.LastCheck = DateTime.UtcNow;
+            //devicetoCheck.LastAlive = scannedDevice.Status == HardwareStatus.API.Enums.DeviceStatus.Online ? DateTime.UtcNow : devicetoCheck.LastAlive;
+            //devicetoCheck.DeviceStatus = scannedDevice.Status;
+
+            //_unitOfWork.DeviceRepository.UpdateDevice(devicetoCheck);
+            //wait _unitOfWork.Complete();
+
+            return Ok(foundDevices);
         }
     }
 }

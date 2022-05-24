@@ -1,6 +1,7 @@
 ﻿using HardwareStatus.API.NetworkScanner.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -87,6 +88,40 @@ namespace HardwareStatus.API.NetworkScanner
             
             return device;
         }
+
+
+        public static List<ScannedDevice> ScanNewDevices(string[] addressesToOmit)
+        {
+            int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
+            int end = BitConverter.ToInt32(new byte[] { 255, 0, 168, 192 }, 0);
+            List<ScannedDevice> devices = new List<ScannedDevice>();
+
+            for (int i = start; i <= end; i++)
+            {
+                byte[] bytes = BitConverter.GetBytes(i);
+                int timeout = 250;
+                var ipAddress = new IPAddress(new[] { bytes[3], bytes[2], bytes[1], bytes[0] });
+
+                //check if currently running ip adress already exist
+                if (!addressesToOmit.Contains(ipAddress.ToString()))
+                {
+                    Ping ping = new Ping();
+                    PingReply pingresult = ping.Send(ipAddress.ToString(), timeout);
+
+                    if (pingresult.Status.ToString() == "Success")
+                    {
+                        var hostname = GetHostName(ipAddress.ToString());
+                        var macAddress = GetMacAddress(ipAddress.ToString());
+                        devices.Add(new ScannedDevice() { HostName = hostname, IP = ipAddress.ToString(), MAC = macAddress, TimeOfScan = DateTime.UtcNow });
+                    }
+                }
+
+
+            }
+
+            return devices;
+        }
+
 
         private static string GetHostName(string ipAddress)
         {

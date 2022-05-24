@@ -46,10 +46,13 @@ namespace Status.Controllers.V1
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(DeviceDTO newDevice)
+        [Route("add-device")]
+        public async Task<IActionResult> Post([FromBody] DeviceDTO newDevice)
         {              
             var device = _mapper.Map<Device>(newDevice);
-                      
+
+            device.DateAdded = DateTime.UtcNow;
+            device.DateModified = DateTime.UtcNow;
             await _deviceService.CreateAsync(device);
 
             return CreatedAtAction(nameof(Get), new { id = device.Id }, device);

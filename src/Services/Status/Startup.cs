@@ -45,7 +45,11 @@ namespace Status.API
             services.AddApplicationServices(_config);
             services.AddMvc();
             services.AddControllers().AddJsonOptions(x =>
-                         x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            {
+                  x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                  x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+                       
             services.AddHealthChecks();
                
 
