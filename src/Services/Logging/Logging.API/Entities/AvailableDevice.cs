@@ -1,4 +1,4 @@
-﻿using Entities.Enums;
+﻿using Common.Enums;
 using System;
 
 namespace Logging.API.Entities

@@ -10,7 +10,7 @@ using HomeControl.API.Interfaces;
 using AutoMapper;
 using HomeControl.API.Entities;
 using HomeControl.API.SyncDataServices.Grpc;
-using Entities.Enums;
+using Common.Enums;
 using System.Net;
 
 namespace HomeControl.API.Controllers

@@ -1,9 +1,10 @@
-﻿namespace Entities.Enums
+﻿namespace Common.Enums
 {
     public enum DeviceStatus
     {
-        Alive,
-        Dead,
-        JustAdded
+        Online,
+        Offline,
+        Unknown,
+        
     }
 }

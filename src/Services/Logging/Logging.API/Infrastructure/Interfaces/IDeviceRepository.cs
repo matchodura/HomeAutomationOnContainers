@@ -1,5 +1,4 @@
-﻿using Entities.Configuration;
-using Logging.API.Entities;
+﻿using Logging.API.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

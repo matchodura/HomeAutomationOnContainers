@@ -1,6 +1,5 @@
 ﻿using Entities;
 using Entities.BLE;
-using Entities.Configuration;
 using Entities.DHT;
 using Logging.API.Entities;
 using Microsoft.EntityFrameworkCore;

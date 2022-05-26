@@ -14,7 +14,6 @@ using Logging.API.DTOs;
 using AutoMapper;
 using Entities.DHT;
 using static Logging.API.Extensions.DateTimeExtensions;
-using Entities.Configuration;
 using Logging.API.Filters;
 
 namespace Logging.API.Controllers

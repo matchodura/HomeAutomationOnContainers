@@ -1,4 +1,4 @@
-﻿using Entities.Enums;
+﻿using Common.Enums;
 using HomeControl.API.Entities;
 using HomeControl.API.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;

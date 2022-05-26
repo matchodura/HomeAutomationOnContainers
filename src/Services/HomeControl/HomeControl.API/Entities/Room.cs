@@ -1,5 +1,4 @@
-﻿using Entities.Enums;
-using HomeControl.API.Entities.Enums;
+﻿using HomeControl.API.Entities.Enums;
 using System;
 using System.Collections.Generic;
 

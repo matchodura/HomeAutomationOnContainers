@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.Enums;
+using Common.Enums;
 using HomeControl.API.DTOs;
 using HomeControl.API.Entities;
 using HomeControl.API.Interfaces;
@@ -64,10 +64,10 @@ namespace HomeControl.API.EventProcessing
                 switch (eventType)
                 {
                     case EventType.DeviceAlive:
-                        availableDevice.Status = DeviceStatus.Alive;
+                        availableDevice.Status = DeviceStatus.Online;
                         break;
                     case EventType.DeviceDead:
-                        availableDevice.Status = DeviceStatus.Dead;
+                        availableDevice.Status = DeviceStatus.Offline;
                         break;
                     default:
                         break;

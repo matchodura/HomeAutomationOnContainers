@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.Enums;
+using Common.Enums;
 using Logging.API.DTOs;
 using Logging.API.Entities;
 using Logging.API.Infrastructure.Interfaces;

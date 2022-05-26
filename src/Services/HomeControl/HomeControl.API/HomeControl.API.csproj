@@ -51,7 +51,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Entities\Entities.csproj" />
-    <ProjectReference Include="..\..\..\Common\MQTTClient\MQTTClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>

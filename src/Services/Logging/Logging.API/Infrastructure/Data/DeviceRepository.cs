@@ -1,5 +1,4 @@
-﻿using Entities.Configuration;
-using Logging.API.Data;
+﻿using Logging.API.Data;
 using Logging.API.Entities;
 using Logging.API.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;

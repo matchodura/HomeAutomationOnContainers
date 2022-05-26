@@ -1,4 +1,4 @@
-﻿using Entities.Enums;
+﻿using Common.Enums;
 
 namespace Logging.API.DTOs
 {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Entities.Enums;
+using Common.Enums;
 using Google.Protobuf.WellKnownTypes;
 using HomeControl.API.DTOs;
 using HomeControl.API.DTOs.LoggingAPI;
