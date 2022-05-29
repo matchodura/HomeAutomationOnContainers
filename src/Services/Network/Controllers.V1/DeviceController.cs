@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.SignalR;
 using Network.API.DTOs;
 using Network.API.Entities;
 using Network.API.HubConfig;
+using Network.API.Infrastructure.Interfaces;
 using Network.API.Services;
 using Network.API.TimerFeatures;
+using System.Net;
 
 namespace Network.Controllers.V1
 {
@@ -14,83 +16,112 @@ namespace Network.Controllers.V1
         private readonly IMapper _mapper;
         private readonly Serilog.ILogger _logger;
         private IHubContext<StatusHub> _hub;
+        private IUnitOfWork _unitOfWork;
 
-        public DeviceController(IMapper mapper, Serilog.ILogger logger, IHubContext<StatusHub> hub)
+        public DeviceController(IMapper mapper, Serilog.ILogger logger, IHubContext<StatusHub> hub, IUnitOfWork unitOfWork)
         {
-        
+
             _mapper = mapper;
             _logger = logger;
             _hub = hub;
+            _unitOfWork = unitOfWork;
         }
 
-        //[HttpGet]
-        //public async Task<List<Device>> Get() =>
-        //    await _deviceService.GetAsync();
-
+        //get all devices
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] string sensorName)
+        [ProducesResponseType(typeof(List<Device>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<Device>> Get()
         {
-            //TODO here return correct sensor
-            //var device = await _deviceService.GetAsync(sensorName);
+            var devicesToReturn = await _unitOfWork.DeviceRepository.GetAllDevices();
 
-            //Thread.Sleep(5000);
+            if (devicesToReturn == null) return NotFound("No devices are yet configured!");
 
-            //if (device is null)
-            //{
-            //    return NotFound();
-            //}
-
-            //var response = _mapper.Map<DeviceStatusResponseDTO>(device);
-            //return Ok(response);
-            return Ok(null);
+            return Ok(devicesToReturn);
         }
 
+        //get device
+        [HttpGet("{deviceName}")]
+        [ProducesResponseType(typeof(Device), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<Device>> Get(string deviceName)
+        {
+            if (string.IsNullOrEmpty(deviceName)) return BadRequest("Invalid name of the device!");
+
+            var deviceToReturn = await _unitOfWork.DeviceRepository.GetDevice(deviceName);
+
+            if (deviceToReturn == null) return NotFound("Device with that name does not exist!");
+
+            return Ok(deviceToReturn);
+        }
+
+        //add device
         [HttpPost]
-        [Route("add-device")]
-        public async Task<IActionResult> Post([FromBody] DeviceDTO newDevice)
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Create([FromBody] AddDeviceDTO newDevice)
         {
-            //var device = _mapper.Map<Device>(newDevice);
+            var deviceExists = _unitOfWork.DeviceRepository.DeviceExists(newDevice.Name);
 
-            //device.DateAdded = DateTime.UtcNow;
-            //device.DateModified = DateTime.UtcNow;
-            //await _deviceService.CreateAsync(device);
+            if (deviceExists == true) return Conflict("Device already exists!");
 
-            //return CreatedAtAction(nameof(Get), new { id = device.Id }, device);
-            return Ok(null);
+            var deviceToAdd = _mapper.Map<Device>(newDevice);
+
+            var currentDate = DateTime.UtcNow;
+            deviceToAdd.DateModified = currentDate;
+            deviceToAdd.DateAdded = currentDate;
+
+            _unitOfWork.DeviceRepository.AddDevice(deviceToAdd);
+
+            if (await _unitOfWork.Complete()) return CreatedAtAction(nameof(Get), new { deviceName = deviceToAdd.Name }, null);
+
+            return BadRequest();
         }
 
-        [HttpPut("{id:length(24)}")]
-        public async Task<IActionResult> Update(string id, Device updatedDevice)
+        //TODO update device
+        //[HttpPut("{deviceName")]
+        //[ProducesResponseType((int)HttpStatusCode.NotFound)]
+        //[ProducesResponseType((int)HttpStatusCode.Created)]
+        //public async Task<IActionResult> Update(string deviceName, [FromBody]  updatedRoom)
+        //{
+        //    var roomExists = _unitOfWork.RoomRepository.RoomAlreadyExists(updatedRoom.Name);
+
+        //    if (roomExists == false) return NotFound("Room doesn't exist!");
+
+        //    var room = _mapper.Map<Room>(updatedRoom);
+
+        //    var currentDate = DateTime.UtcNow;
+        //    room.LastModified = currentDate;
+
+        //    _unitOfWork.RoomRepository.UpdateRoom(room);
+
+        //    if (await _unitOfWork.Complete()) return CreatedAtAction(nameof(Get), new { roomName = room.Name }, null);
+
+        //    return BadRequest();
+        //}
+
+        //delete device
+        [HttpDelete("{deviceName}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Delete(string deviceName)
         {
-            //var device = await _deviceService.GetAsync(id);
+            var deviceExists = _unitOfWork.DeviceRepository.DeviceExists(deviceName);
 
-            //if (device is null)
-            //{
-            //    return NotFound();
-            //}
+            if (deviceExists == false) return NotFound("Device doesn't exist!");
 
-            //updatedDevice.Id = device.Id;
+            var deviceToBeDeleted = await _unitOfWork.DeviceRepository.GetDevice(deviceName);
 
-            //await _deviceService.UpdateAsync(id, updatedDevice);
+            _unitOfWork.DeviceRepository.DeleteDevice(deviceToBeDeleted);
 
-            //return NoContent();
-            return Ok(null);
+            if (await _unitOfWork.Complete()) return Ok("Device has been deleted sucessfuly!");
+
+            return BadRequest();
         }
-
-        [HttpDelete("{id:length(24)}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            //var device = await _deviceService.GetAsync(id);
-
-            //if (device is null)
-            //{
-            //    return NotFound();
-            //}
-
-            //await _deviceService.RemoveAsync(device.Id);
-            //return NoContent();
-            return Ok(null);
-        }         
-
     }
 }

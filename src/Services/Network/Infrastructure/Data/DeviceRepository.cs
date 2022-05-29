@@ -28,9 +28,17 @@ namespace Network.API.Infrastructure.Data
 
         public void DeleteDevice(Device device)
         {
-            var roomToBeDeleted = _context.Devices.First(x => x.Name == device.Name);
+            var deviceToDelete = _context.Devices.First(x => x.Name == device.Name);
 
-            _context.Devices.Remove(roomToBeDeleted);
+            _context.Devices.Remove(deviceToDelete);
+        }
+
+        public bool DeviceExists(string deviceName)
+        {
+            var deviceToCheck = _context.Devices.First(x => x.Name == deviceName);
+
+            return deviceToCheck != null ? true : false;
+            
         }
 
         public async Task<List<Device>> GetAllDevices()

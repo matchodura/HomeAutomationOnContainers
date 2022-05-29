@@ -11,7 +11,7 @@ namespace Network.API.Infrastructure.Interfaces
         void DeleteDevice(Device device);
         void UpdateDevice(Device device);
         void UpdateDevices(List<Device> devices);
-
+        bool DeviceExists(string deviceName);
         void TruncateTable();
         Task<bool> Save();
         Task<List<Device>> GetAllDevices();

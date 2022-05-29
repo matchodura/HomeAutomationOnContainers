@@ -30,6 +30,18 @@ namespace HomeControl.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(List<RoomDisplayDTO>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> Get()
+        {
+            var rooms = await _unitOfWork.RoomRepository.GetAllRooms();
+
+            if (rooms.Count == 0) return NotFound("There are no configured rooms!");
+
+            return Ok(rooms);
+        }
+
+        [HttpGet("{roomName}")]
         [ProducesResponseType(typeof(RoomDTO), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -67,18 +79,6 @@ namespace HomeControl.API.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        [Route("all")]
-        [ProducesResponseType(typeof(List<RoomDisplayDTO>), (int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> GetAllRooms()
-        {
-            var rooms = await _unitOfWork.RoomRepository.GetAllRooms();
-
-            if (rooms.Count == 0) return NotFound("There are no configured rooms!");
-
-            return Ok(rooms);
-        }
 
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -140,7 +140,6 @@ namespace HomeControl.API.Controllers
 
 
 
-
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Created)]
@@ -195,9 +194,6 @@ namespace HomeControl.API.Controllers
 
             return Ok(test);
         }
-
-
-
 
     }
 }
