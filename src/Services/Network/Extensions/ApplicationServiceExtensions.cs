@@ -9,6 +9,9 @@ using Network.API.Profiles;
 using Network.API.Services;
 using Network.API.Services.MQTT;
 using Network.API.Services.RabbitMQ;
+using Network.API.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Network.API.Infrastructure.Interfaces;
 
 namespace Network.Extensions
 {
@@ -34,13 +37,13 @@ namespace Network.Extensions
 
             services.AddAutoMapper(typeof(AutoMapperStatusProfile).Assembly);
             services.AddGrpc();
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
-            //services.AddDbContext<RpiDataContext>(options =>
-            //{
-            //    string connStr = config.GetConnectionString("DefaultConnection");
-            //    options.UseNpgsql(connStr);
-            //});
+            services.AddDbContext<DataContext>(options =>
+            {
+                string connStr = config.GetConnectionString("DefaultConnection");
+                options.UseNpgsql(connStr);
+            });
 
             services.AddMqttClientHostedService();
 

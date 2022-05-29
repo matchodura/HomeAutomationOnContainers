@@ -6,7 +6,7 @@
         Computer,
         Smartphone,
         HomeAppliance,
-        Sensor,
+        Mosquitto,
         Lamp,
         Networking,
         Unknown,

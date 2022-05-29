@@ -12,17 +12,15 @@ namespace Network.API.Services
         private readonly Serilog.ILogger _logger;
         private readonly IHubContext<StatusHub> _hub;
         private readonly IMapper _mapper;
-        private readonly IUnitOfWork _unitOfWork;
 
         private Timer _timer = null!;
 
         public StatusUpdateService(Serilog.ILogger logger, IHubContext<StatusHub> hub,
-            IMapper mapper, IUnitOfWork unitOfWork)
+            IMapper mapper)
         {
             _logger = logger;
             _hub = hub;           
-            _mapper = mapper;
-            _unitOfWork = unitOfWork;
+            _mapper = mapper;      
 
         }
 
