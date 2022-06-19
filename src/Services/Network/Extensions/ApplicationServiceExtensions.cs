@@ -48,6 +48,7 @@ namespace Network.Extensions
             //services.AddHostedService<DeviceCheckService>();
             //services.AddHostedService<StatusUpdateService>();
             services.AddHostedService<NetworkScanService>();
+            services.AddHostedService<HubService>();
 
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
