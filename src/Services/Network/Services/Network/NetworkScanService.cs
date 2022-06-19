@@ -1,31 +1,21 @@
 ﻿using AutoMapper;
 using Common.Enums;
-using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Network.API.Entities;
-using Network.API.HubConfig;
 using Network.API.Infrastructure.Interfaces;
 using Network.API.NetworkScanner;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace HardwareStatus.API.Services
+namespace Network.API.Services
 {
-    public class HardwareStatusScanService : IHostedService, IDisposable
+    public class NetworkScanService : IHostedService, IDisposable
     {
         private int executionCount = 0;
         private readonly Serilog.ILogger _logger;
-        private readonly IHubContext<StatusHub> _hub;
         private readonly IMapper _mapper;
         private readonly IServiceScopeFactory _scopeFactory;
 
         private Timer _timer = null!;
 
-        public HardwareStatusScanService(Serilog.ILogger logger, IMapper mapper, IServiceScopeFactory scopeFactory)
+        public NetworkScanService(Serilog.ILogger logger, IMapper mapper, IServiceScopeFactory scopeFactory)
         {
             _logger = logger;           
             _mapper = mapper;
@@ -34,7 +24,7 @@ namespace HardwareStatus.API.Services
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Hardware Status Scan Service running.");
+            _logger.Information("Network Scan Service is running.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero,
                 TimeSpan.FromSeconds(60));
@@ -77,15 +67,13 @@ namespace HardwareStatus.API.Services
 
                     context.DeviceRepository.UpdateDevices(output);
                     await context.Complete();
-
                 }
-                //return allDevices.Result;
             }
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Hardware Status Scan Service is stopping.");
+            _logger.Information("Network Scan Service is stopping.");
 
             _timer?.Change(Timeout.Infinite, 0);
 
@@ -95,18 +83,6 @@ namespace HardwareStatus.API.Services
         public void Dispose()
         {
             _timer?.Dispose();
-        }
-
-        private List<Device> GetCurrentData()
-        {      
-            using (var scope = _scopeFactory.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetService<IUnitOfWork>();
-                var allDevices = context.DeviceRepository.GetAllDevices();
-
-                return allDevices.Result;
-            }                     
-      
         }
     }
 }

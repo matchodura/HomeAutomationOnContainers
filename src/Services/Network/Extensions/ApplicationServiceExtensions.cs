@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 using MQTTnet.Client.Options;
 using Serilog;
-using Network.API.Entities;
 using Network.API.MQTT;
 using Network.API.Options;
 using Network.API.Profiles;
@@ -47,8 +45,10 @@ namespace Network.Extensions
 
             services.AddMqttClientHostedService();
 
-            services.AddHostedService<DeviceCheckService>();
-            services.AddHostedService<StatusUpdateService>();
+            //services.AddHostedService<DeviceCheckService>();
+            //services.AddHostedService<StatusUpdateService>();
+            services.AddHostedService<NetworkScanService>();
+
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddSignalR();

@@ -6,12 +6,7 @@ using Network.API.Entities;
 using Network.API.HubConfig;
 using Network.API.Infrastructure.Interfaces;
 using Network.API.NetworkScanner;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Network.Controllers.V1
 {
