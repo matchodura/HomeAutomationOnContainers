@@ -101,7 +101,7 @@ namespace Network.Extensions
             return new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty("_service", "status-api")
+                .Enrich.WithProperty("_service", "network-api")
                 .Enrich.WithProperty("_machine", machineName)
                 .WriteTo.Seq(string.IsNullOrWhiteSpace(seqServerUrl) ? "http://seq" : seqServerUrl)
                 .ReadFrom.Configuration(configuration)

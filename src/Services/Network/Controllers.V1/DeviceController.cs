@@ -123,5 +123,7 @@ namespace Network.Controllers.V1
 
             return BadRequest();
         }
+        //TODO mosquitto methods here? or in another controller?
+        //TODO add control methods here? or in another controller?
     }
 }

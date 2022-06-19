@@ -30,30 +30,23 @@ namespace Network.Controllers.V1
             _hub = hub;
         }
 
+        //scan all devices in the network - total scan
         [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-
-            return Ok("works!");
-        }
-
-
-        [HttpGet]
-        [Route("refresh-devices")]
-        public async Task<IActionResult> RefreshDevices()
+        [Route("total-scan")]
+        public async Task<IActionResult> TotalScan()
         {
             _logger.Information("Starting total scan of devices in network!");
 
             _unitOfWork.DeviceRepository.TruncateTable();
             await _unitOfWork.Complete();
 
-
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var scannedDevices = Scanner.TotalScan();
+            var scannedDevices = Scanner.TotalScan(_logger);
             stopwatch.Stop();
 
             _logger.Information($"Scan took {stopwatch.ElapsedMilliseconds} miliseconds, found {scannedDevices.Count} devices!");
+
             //map found devices to entity in database
             List<Device> devicesToAdd = new List<Device>();
 
@@ -61,55 +54,27 @@ namespace Network.Controllers.V1
             {
                 devicesToAdd.Add(new Device()
                 {
-                    Name = device.HostName,
+                    Name = device.HostName ?? "default",
                     HardwareType = HardwareType.Unknown,
-                    HostName = device.HostName,
+                    HostName = device.HostName ?? "default",
                     IP = device.IP,
                     MAC = device.MAC,
-                    DeviceStatus = DeviceStatus.Unknown
+                    DeviceStatus = DeviceStatus.Online
                 });
             }
-
 
             _unitOfWork.DeviceRepository.AddDevices(devicesToAdd);
             await _unitOfWork.Complete();
 
-            //return Ok(scannedDevices);
-
             return Ok("completed!");
         }
 
-
-        [HttpGet]
-        [Route("all")]
-        public async Task<ActionResult<List<Device>>> GetAllDevices()
-        {
-            var allDevices = await _unitOfWork.DeviceRepository.GetAllDevices();
-
-            return Ok(allDevices);
-        }
-
-        [HttpPut]
-        [Route("update-device")]
-        public async Task<ActionResult> UpdateDevice([FromBody] Device device)
-        {
-            var deviceToUpdate = await _unitOfWork.DeviceRepository.GetDevice(device.HostName);
-
-            deviceToUpdate.HardwareType = device.HardwareType;
-            deviceToUpdate.Name = device.Name;
-
-            _unitOfWork.DeviceRepository.UpdateDevice(deviceToUpdate);
-
-            await _unitOfWork.Complete();
-
-            return Ok();
-        }
-
+        //refresh specified device in network
         [HttpPost]
-        [Route("refresh-device")]
-        public async Task<IActionResult> RefreshDevics([FromBody] Device device)
+        [Route("refresh-device/{name}")]
+        public async Task<IActionResult> RefreshDevice(string name)
         {
-            var devicetoCheck = _unitOfWork.DeviceRepository.GetDevice(device.HostName).Result;
+            var devicetoCheck = _unitOfWork.DeviceRepository.GetDevice(name).Result;
 
             var scannedDevice = Scanner.ScanOfKnownDevices(devicetoCheck.IP);
 
@@ -117,13 +82,46 @@ namespace Network.Controllers.V1
             devicetoCheck.LastAlive = scannedDevice.Status == DeviceStatus.Online ? DateTime.UtcNow : devicetoCheck.LastAlive;
             devicetoCheck.DeviceStatus = scannedDevice.Status;
 
+            _logger.Information($"Refreshing status of device: {name} is {devicetoCheck.DeviceStatus.ToString()}");
+
             _unitOfWork.DeviceRepository.UpdateDevice(devicetoCheck);
+
             await _unitOfWork.Complete();
 
             return Ok("completed!");
         }
 
+        //refreshes all configured devices in network
+        [HttpPost]
+        [Route("refresh-all")]
+        public async Task<IActionResult> RefreshAllDevices()
+        {
+            var devicesToCheck = _unitOfWork.DeviceRepository.GetAllDevices().Result;
 
+            var refreshedDevices = Scanner.ScanOfKnownDevices(devicesToCheck.Select(x => x.IP).ToArray());
+
+
+            foreach (var device in devicesToCheck)
+            {
+                var deviceToUpdate = refreshedDevices.Where(x => x.IP == device.IP).First();
+
+                device.DeviceStatus = deviceToUpdate.Status;
+
+                if(deviceToUpdate.Status == DeviceStatus.Online)
+                {
+                    device.LastAlive = refreshedDevices.Where(x => x.IP == device.IP).Select(x => x.TimeOfScan).First();
+                }
+
+                device.LastCheck = refreshedDevices.Where(x => x.IP == device.IP).Select(x => x.TimeOfScan).First();
+            }
+
+            _unitOfWork.DeviceRepository.UpdateDevices(devicesToCheck);
+            await _unitOfWork.Complete();
+
+            return Ok("completed!");
+        }
+
+        //find new devices in network
         [HttpGet]
         [Route("find-new-devices")]
         public async Task<IActionResult> FindNewDevices()
@@ -134,12 +132,23 @@ namespace Network.Controllers.V1
             //find new devices which previously were not configured -> saves some time pinging
             var foundDevices = Scanner.ScanNewDevices(configuredDevices.Select(x => x.IP).ToArray());
 
-            //devicetoCheck.LastCheck = DateTime.UtcNow;
-            //devicetoCheck.LastAlive = scannedDevice.Status == HardwareStatus.API.Enums.DeviceStatus.Online ? DateTime.UtcNow : devicetoCheck.LastAlive;
-            //devicetoCheck.DeviceStatus = scannedDevice.Status;
+            List<Device> devicesToAdd = new List<Device>();
 
-            //_unitOfWork.DeviceRepository.UpdateDevice(devicetoCheck);
-            //wait _unitOfWork.Complete();
+            foreach (var device in foundDevices)
+            {
+                devicesToAdd.Add(new Device()
+                {
+                    Name = device.HostName ?? "default",
+                    HardwareType = HardwareType.Unknown,
+                    HostName = device.HostName ?? "default",
+                    IP = device.IP,
+                    MAC = device.MAC,
+                    DeviceStatus = DeviceStatus.Online
+                });
+            }                      
+
+            _unitOfWork.DeviceRepository.AddDevices(devicesToAdd);
+            await _unitOfWork.Complete();
 
             return Ok(foundDevices);
         }

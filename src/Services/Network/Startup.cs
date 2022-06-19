@@ -55,7 +55,7 @@ namespace Network.API
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Status", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Network", Version = "v1" });
             });
         }
 

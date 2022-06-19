@@ -2,8 +2,8 @@
 {
     public enum DeviceStatus
     {
+        Unknown,
         Online,
-        Offline,
-        Unknown        
+        Offline           
     }
 }

@@ -11,7 +11,12 @@ namespace Network.API.NetworkScanner
 {
     public static class Scanner
     {
-        public static List<ScannedDevice> TotalScan()
+        /// <summary>
+        /// Finds all devices in the network, used as first scan for the service
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <returns></returns>
+        public static List<ScannedDevice> TotalScan(Serilog.ILogger logger)
         {
             int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
             int end = BitConverter.ToInt32(new byte[] { 255, 0, 168, 192 }, 0);
@@ -26,24 +31,31 @@ namespace Network.API.NetworkScanner
                 Ping ping = new Ping();
                 PingReply pingresult = ping.Send(ipAddress.ToString(), timeout);
 
-                if (pingresult.Status.ToString() == "Success")
+                if (pingresult.Status.ToString() == "Success")           
                 {
+                    
                     var hostname = GetHostName(ipAddress.ToString());
                     var macAddress = GetMacAddress(ipAddress.ToString());
+
+                    logger.Information($"Found device: {hostname} with IP: {ipAddress}");
+
                     devices.Add(new ScannedDevice() { HostName = hostname, IP = ipAddress.ToString(), MAC = macAddress, TimeOfScan = DateTime.UtcNow });
                 }
-
             }
 
             return devices;
         }
 
+        /// <summary>
+        /// Gets status of known devices in the network
+        /// </summary>
+        /// <param name="addresses"></param>
+        /// <returns></returns>
         public static List<KnownDevices> ScanOfKnownDevices(string[] addresses)
         {
             int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
             int end = BitConverter.ToInt32(new byte[] { 255, 0, 168, 192 }, 0);
             List<KnownDevices> devices = new List<KnownDevices>();
-
 
             foreach(var address in addresses)
             {
@@ -63,9 +75,14 @@ namespace Network.API.NetworkScanner
                 }
             }
                
-
             return devices;
         }
+
+        /// <summary>
+        /// Checks status of known device in the network
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static KnownDevices ScanOfKnownDevices(string address)
         {
             int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
@@ -90,7 +107,11 @@ namespace Network.API.NetworkScanner
             return device;
         }
 
-
+        /// <summary>
+        /// Find new devices in the network
+        /// </summary>
+        /// <param name="addressesToOmit">List of IPs to ommit from pinging</param>
+        /// <returns></returns>
         public static List<ScannedDevice> ScanNewDevices(string[] addressesToOmit)
         {
             int start = BitConverter.ToInt32(new byte[] { 0, 0, 168, 192 }, 0);
@@ -116,14 +137,16 @@ namespace Network.API.NetworkScanner
                         devices.Add(new ScannedDevice() { HostName = hostname, IP = ipAddress.ToString(), MAC = macAddress, TimeOfScan = DateTime.UtcNow });
                     }
                 }
-
-
             }
 
             return devices;
         }
 
-
+        /// <summary>
+        /// Gets hostname of device
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <returns></returns>
         private static string GetHostName(string ipAddress)
         {
             try
@@ -144,6 +167,11 @@ namespace Network.API.NetworkScanner
             return null;
         }
 
+        /// <summary>
+        /// Gets MAC of device
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <returns></returns>
         private static string GetMacAddress(string ipAddress)
         {
             string macAddress = string.Empty;

@@ -14,8 +14,6 @@ using Network.API.Services.RabbitMQ;
 using Network.API.DTOs;
 using Network.API.Services.MQTT;
 
-
-
 namespace Network.API.Services
 {
     public class DeviceCheckService : IHostedService, IDisposable

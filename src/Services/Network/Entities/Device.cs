@@ -18,7 +18,8 @@ namespace Network.API.Entities
         public DateTime LastAlive { get; set; } = DateTime.UtcNow;
         public DeviceStatus DeviceStatus { get; set; }
         public bool IsMosquitto { get; set; }
-        public MosquittoDevice MosquittoDevice { get; set; } = null!;
+        public int? MosquittoDeviceID { get; set; }
+        public virtual MosquittoDevice MosquittoDevice { get; set; } = null!;
 
     }
 }
