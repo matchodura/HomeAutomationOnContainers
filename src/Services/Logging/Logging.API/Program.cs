@@ -23,7 +23,7 @@ namespace Logging.API
 
             try
             {
-                var context = services.GetRequiredService<RpiDataContext>();
+                var context = services.GetRequiredService<DataContext>();
                 await context.Database.MigrateAsync();
 
             }

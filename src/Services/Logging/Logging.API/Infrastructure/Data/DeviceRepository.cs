@@ -11,9 +11,9 @@ namespace Logging.API.Infrastructure.Data
 {
     public class DeviceRepository : IDeviceRepository
     {
-        private readonly RpiDataContext _context;
+        private readonly DataContext _context;
 
-        public DeviceRepository(RpiDataContext context)
+        public DeviceRepository(DataContext context)
         {
             _context = context;
         }

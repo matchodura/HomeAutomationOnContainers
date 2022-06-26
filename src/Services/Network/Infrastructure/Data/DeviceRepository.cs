@@ -48,7 +48,7 @@ namespace Network.API.Infrastructure.Data
 
         public async Task<Device> GetDevice(string hostName)
         {
-            return await _context.Devices.FirstOrDefaultAsync(x => x.HostName == hostName);
+            return await _context.Devices.Include(x=>x.MosquittoDevice).FirstOrDefaultAsync(x => x.HostName == hostName);
         }
 
         public async Task<bool> Save()

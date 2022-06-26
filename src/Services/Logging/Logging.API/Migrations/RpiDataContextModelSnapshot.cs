@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Logging.API.Migrations
 {
-    [DbContext(typeof(RpiDataContext))]
+    [DbContext(typeof(DataContext))]
     partial class RpiDataContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

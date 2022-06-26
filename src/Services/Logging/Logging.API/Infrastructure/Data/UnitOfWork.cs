@@ -10,9 +10,9 @@ namespace Logging.API.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly RpiDataContext _context;
+        private readonly DataContext _context;
 
-        public UnitOfWork(RpiDataContext context)
+        public UnitOfWork(DataContext context)
         {
             _context = context;
         }

@@ -35,7 +35,7 @@ namespace Logging.API.Extensions
             services.AddGrpc();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<Serilog.ILogger>(CreateSerilogLogger(config));
-            services.AddDbContext<RpiDataContext>(options =>
+            services.AddDbContext<DataContext>(options =>
             {
                 string connStr = config.GetConnectionString("DefaultConnection");
                 options.UseNpgsql(connStr);             

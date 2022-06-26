@@ -12,9 +12,9 @@ namespace Logging.API.Data
 {
     public class MijiaRepository : IMijiaRepository
     {
-        private readonly RpiDataContext _context;
+        private readonly DataContext _context;
 
-        public MijiaRepository(RpiDataContext context)
+        public MijiaRepository(DataContext context)
         {
             _context = context;
         }

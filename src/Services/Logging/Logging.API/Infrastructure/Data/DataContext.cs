@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Logging.API.Data
 {
-    public class RpiDataContext : DbContext
+    public class DataContext : DbContext
     {
 
-        public RpiDataContext(DbContextOptions<RpiDataContext> options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
 

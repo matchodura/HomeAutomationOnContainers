@@ -15,6 +15,10 @@ namespace Network.API.Profiles
 
             CreateMap<Device, AvailableDeviceDTO>();
 
+            CreateMap<AddMosquittoDeviceDTO, MosquittoDevice>()
+                .ForMember(d => d.MosquittoUsername, opt => opt.MapFrom(src => src.Username))
+                .ForMember(d => d.MosquittoPassword, opt => opt.MapFrom(src => src.Password));
+
             //CreateMap<Device, GrpcItemModel>()
             //    .ForMember(d => d.Id, opt => opt.MapFrom(src => src.Id))
             //    .ForMember(d => d.Name, opt => opt.MapFrom(src => src.Name))

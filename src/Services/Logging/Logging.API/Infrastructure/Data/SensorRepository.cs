@@ -12,9 +12,9 @@ namespace Logging.API.Infrastructure.Data
 {
     public class SensorRepository : ISensorRepository
     {
-        private readonly RpiDataContext _context;
+        private readonly DataContext _context;
 
-        public SensorRepository(RpiDataContext context)
+        public SensorRepository(DataContext context)
         {
             _context = context;
         }

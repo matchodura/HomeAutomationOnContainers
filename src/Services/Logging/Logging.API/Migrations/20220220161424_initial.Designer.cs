@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Logging.API.Migrations
 {
-    [DbContext(typeof(RpiDataContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20220220161424_initial")]
     partial class initial
     {

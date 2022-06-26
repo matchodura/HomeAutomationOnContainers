@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Logging.API.Migrations
 {
-    [DbContext(typeof(RpiDataContext))]
+    [DbContext(typeof(DataContext))]
     [Migration("20220319164503_UpdateDHTWithSensorName")]
     partial class UpdateDHTWithSensorName
     {
